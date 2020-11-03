@@ -22,19 +22,19 @@ class LocomotiveTest {
         assertEquals(loco.getNext(), fToAdd);
 
         loco.detachCarriage();
-        assertEquals(loco.getNext(), null);
+        assertNull(loco.getNext());
 
         loco.attachCarriage(locoToAdd);
         assertEquals(loco.getNext(), locoToAdd);
 
         loco.detachCarriage();
-        assertEquals(loco.getNext(), null);
+        assertNull(loco.getNext());
 
         loco.attachCarriage(pToAdd);
         assertEquals(loco.getNext(), pToAdd);
 
         loco.detachCarriage();
-        assertEquals(loco.getNext(), null);
+        assertNull(loco.getNext());
     }
 
     @Test
@@ -45,14 +45,10 @@ class LocomotiveTest {
         Locomotive locoToAdd = Locomotive.of(2);
 
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            loco.attachCarriage(loco);
-        });
+        assertThrows(IllegalArgumentException.class, () -> loco.attachCarriage(loco));
 
         loco.attachCarriage(fToAdd);
-        assertThrows(IllegalArgumentException.class, () -> {
-            loco.attachCarriage(locoToAdd);
-        });
+        assertThrows(IllegalArgumentException.class, () -> loco.attachCarriage(locoToAdd));
     }
 
     @Test
@@ -60,10 +56,8 @@ class LocomotiveTest {
         //GIVEN
         Locomotive loco = Locomotive.of(0);
 
-        //EXPEXT
-        assertThrows(NullPointerException.class, () -> {
-            loco.detachCarriage();
-        });
+        //EXPECT
+        assertThrows(NullPointerException.class, loco::detachCarriage);
     }
 
 
@@ -86,8 +80,6 @@ class LocomotiveTest {
         User driver = User.ofSsn(UUID.randomUUID().toString());
 
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            loco.setDriver(driver);
-        });
+        assertThrows(IllegalArgumentException.class, () -> loco.setDriver(driver));
     }
 }

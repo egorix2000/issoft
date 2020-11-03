@@ -22,19 +22,19 @@ class PassengerCarriageTest {
         assertEquals(passengerCarriage.getNext(), fToAdd);
 
         passengerCarriage.detachCarriage();
-        assertEquals(passengerCarriage.getNext(), null);
+        assertNull(passengerCarriage.getNext());
 
         passengerCarriage.attachCarriage(locoToAdd);
         assertEquals(passengerCarriage.getNext(), locoToAdd);
 
         passengerCarriage.detachCarriage();
-        assertEquals(passengerCarriage.getNext(), null);
+        assertNull(passengerCarriage.getNext());
 
         passengerCarriage.attachCarriage(pToAdd);
         assertEquals(passengerCarriage.getNext(), pToAdd);
 
         passengerCarriage.detachCarriage();
-        assertEquals(passengerCarriage.getNext(), null);
+        assertNull(passengerCarriage.getNext());
     }
 
     @Test
@@ -45,14 +45,12 @@ class PassengerCarriageTest {
         Locomotive locoToAdd = Locomotive.of(2);
 
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            passengerCarriage.attachCarriage(passengerCarriage);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> passengerCarriage.attachCarriage(passengerCarriage));
 
         passengerCarriage.attachCarriage(fToAdd);
-        assertThrows(IllegalArgumentException.class, () -> {
-            passengerCarriage.attachCarriage(locoToAdd);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> passengerCarriage.attachCarriage(locoToAdd));
     }
 
     @Test
@@ -60,10 +58,8 @@ class PassengerCarriageTest {
         //GIVEN
         PassengerCarriage passengerCarriage = PassengerCarriage.of(0, 30);
 
-        //EXPEXT
-        assertThrows(NullPointerException.class, () -> {
-            passengerCarriage.detachCarriage();
-        });
+        //EXPECT
+        assertThrows(NullPointerException.class, passengerCarriage::detachCarriage);
     }
 
     @Test
@@ -79,13 +75,11 @@ class PassengerCarriageTest {
     @Test
     void of_fail() {
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            PassengerCarriage passengerCarriage = PassengerCarriage.of(1, -1);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> PassengerCarriage.of(1, -1));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            PassengerCarriage passengerCarriage = PassengerCarriage.of(2, 0);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> PassengerCarriage.of(2, 0));
     }
 
     @Test
@@ -112,13 +106,11 @@ class PassengerCarriageTest {
 
         //EXPECT
         passengerCarriage.addPassenger(2, passenger);
-        assertThrows(IllegalArgumentException.class, () -> {
-            passengerCarriage.addPassenger(2, extra_passenger);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> passengerCarriage.addPassenger(2, extra_passenger));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            passengerCarriage.addPassenger(11, extra_passenger);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> passengerCarriage.addPassenger(11, extra_passenger));
     }
 
     @Test

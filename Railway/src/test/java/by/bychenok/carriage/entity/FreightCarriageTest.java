@@ -20,19 +20,19 @@ class FreightCarriageTest {
         assertEquals(freightCarriage.getNext(), fToAdd);
 
         freightCarriage.detachCarriage();
-        assertEquals(freightCarriage.getNext(), null);
+        assertNull(freightCarriage.getNext());
 
         freightCarriage.attachCarriage(locoToAdd);
         assertEquals(freightCarriage.getNext(), locoToAdd);
 
         freightCarriage.detachCarriage();
-        assertEquals(freightCarriage.getNext(), null);
+        assertNull(freightCarriage.getNext());
 
         freightCarriage.attachCarriage(pToAdd);
         assertEquals(freightCarriage.getNext(), pToAdd);
 
         freightCarriage.detachCarriage();
-        assertEquals(freightCarriage.getNext(), null);
+        assertNull(freightCarriage.getNext());
     }
 
     @Test
@@ -43,14 +43,12 @@ class FreightCarriageTest {
         Locomotive locoToAdd = Locomotive.of(2);
 
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            freightCarriage.attachCarriage(freightCarriage);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> freightCarriage.attachCarriage(freightCarriage));
 
         freightCarriage.attachCarriage(fToAdd);
-        assertThrows(IllegalArgumentException.class, () -> {
-            freightCarriage.attachCarriage(locoToAdd);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> freightCarriage.attachCarriage(locoToAdd));
     }
 
     @Test
@@ -59,9 +57,7 @@ class FreightCarriageTest {
         FreightCarriage freightCarriage = FreightCarriage.of(0, 50);
 
         //EXPECT
-        assertThrows(NullPointerException.class, () -> {
-            freightCarriage.detachCarriage();
-        });
+        assertThrows(NullPointerException.class, freightCarriage::detachCarriage);
     }
 
     @Test
@@ -88,9 +84,8 @@ class FreightCarriageTest {
         Cargo tooHeavyCargo = Cargo.of(0, 51);
 
         //EXPECTED
-        assertThrows(IllegalArgumentException.class, () -> {
-            freightCarriage.load(tooHeavyCargo);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> freightCarriage.load(tooHeavyCargo));
     }
 
     @Test
@@ -99,9 +94,7 @@ class FreightCarriageTest {
         FreightCarriage freightCarriage = FreightCarriage.of(0, 50);
 
         //EXPECT
-        assertThrows(NullPointerException.class, () -> {
-            freightCarriage.unload();
-        });
+        assertThrows(NullPointerException.class, freightCarriage::unload);
     }
 
     @Test
@@ -111,7 +104,7 @@ class FreightCarriageTest {
         FreightCarriage freightCarriage = FreightCarriage.of(0, liftingCapacity);
 
         //EXPECT
-        assertEquals(freightCarriage.getLiftingСapacity(), liftingCapacity);
+        assertEquals(freightCarriage.getLiftingCapacity(), liftingCapacity);
     }
 
     @Test
@@ -121,12 +114,10 @@ class FreightCarriageTest {
         int zeroCapacity = 0;
 
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            FreightCarriage freightCarriage = FreightCarriage.of(1, negativeCapacity);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> FreightCarriage.of(1, negativeCapacity));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            FreightCarriage freightCarriage = FreightCarriage.of(2, zeroCapacity);
-        });
+        assertThrows(IllegalArgumentException.class,
+                () -> FreightCarriage.of(2, zeroCapacity));
     }
 }
