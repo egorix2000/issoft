@@ -2,9 +2,7 @@ package by.bychenok.carriage.entity;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.sql.SQLOutput;
 import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;

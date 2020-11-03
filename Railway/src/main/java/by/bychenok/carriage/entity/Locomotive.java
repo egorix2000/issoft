@@ -1,6 +1,5 @@
 package by.bychenok.carriage.entity;
 
-import by.bychenok.cargo.entity.Cargo;
 import by.bychenok.user.entity.User;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class Locomotive extends Carriage {
         log.info("Setting driver: {} into locomotive: {} ...",
                 driver.getSsn(),
                 this.getNumber());
-        checkArgument(driver.hasTrainLicence() == true,
+        checkArgument(driver.hasTrainLicence(),
                 "User without train licence can not drive train");
         this.driver = driver;
         log.info("Driver: {} was set successfully into locomotive: {} ...",

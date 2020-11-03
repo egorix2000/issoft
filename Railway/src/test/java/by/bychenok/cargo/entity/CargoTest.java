@@ -19,12 +19,8 @@ class CargoTest {
     @Test
     void of_fail() {
         //EXPECT
-        assertThrows(IllegalArgumentException.class, () -> {
-            Cargo cargo = Cargo.of(1, -2);
-        });
+        assertThrows(IllegalArgumentException.class, () -> Cargo.of(1, -2));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            Cargo cargo = Cargo.of(2, 0);
-        });
+        assertThrows(IllegalArgumentException.class, () -> Cargo.of(2, 0));
     }
 }

@@ -2,7 +2,6 @@ package by.bychenok.carriage.entity;
 
 import by.bychenok.user.entity.User;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
