@@ -2,7 +2,6 @@ package by.bychenok.carriage.entity;
 
 import by.bychenok.user.entity.User;
 import org.junit.jupiter.api.Test;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.UUID;
 
@@ -14,7 +13,7 @@ class LocomotiveTest {
     void attachDetachCarriage_success() {
         //GIVEN
         Locomotive loco = Locomotive.of(0);
-        FreighCarriage fToAdd = FreighCarriage.of(1, 20);
+        FreightCarriage fToAdd = FreightCarriage.of(1, 20);
         Locomotive locoToAdd = Locomotive.of(2);
         PassengerCarriage pToAdd = PassengerCarriage.of(3, 10);
 
@@ -42,7 +41,7 @@ class LocomotiveTest {
     void attachCarriage_fail() {
         //GIVEN
         Locomotive loco = Locomotive.of(0);
-        FreighCarriage fToAdd = FreighCarriage.of(1, 20);
+        FreightCarriage fToAdd = FreightCarriage.of(1, 20);
         Locomotive locoToAdd = Locomotive.of(2);
 
         //EXPECT

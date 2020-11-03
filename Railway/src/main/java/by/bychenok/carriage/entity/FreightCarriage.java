@@ -8,22 +8,22 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Slf4j
-public class FreighCarriage extends Carriage {
+public class FreightCarriage extends Carriage {
     @Getter
     private final int liftingСapacity;
     private Cargo cargo;
 
-    private FreighCarriage(int number, int liftingСapacity) {
+    private FreightCarriage(int number, int liftingСapacity) {
         super(number);
         this.liftingСapacity = liftingСapacity;
         this.cargo = null;
     }
 
-    public static FreighCarriage of(int number, int liftingСapacity) {
+    public static FreightCarriage of(int number, int liftingСapacity) {
         log.info("Freight carriage with number: {} is creating ...", number);
         checkArgument(liftingСapacity > 0,
                 "Lifting capacity must be more that zero");
-        FreighCarriage f = new FreighCarriage(number, liftingСapacity);
+        FreightCarriage f = new FreightCarriage(number, liftingСapacity);
         log.info("Freight carriage with number: {} was successfully created", number);
         return f;
     }
