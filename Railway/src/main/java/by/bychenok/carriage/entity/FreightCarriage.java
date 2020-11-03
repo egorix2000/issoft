@@ -10,20 +10,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Slf4j
 public class FreightCarriage extends Carriage {
     @Getter
-    private final int liftingСapacity;
+    private final int liftingCapacity;
     private Cargo cargo;
 
-    private FreightCarriage(int number, int liftingСapacity) {
+    private FreightCarriage(int number, int liftingCapacity) {
         super(number);
-        this.liftingСapacity = liftingСapacity;
+        this.liftingCapacity = liftingCapacity;
         this.cargo = null;
     }
 
-    public static FreightCarriage of(int number, int liftingСapacity) {
+    public static FreightCarriage of(int number, int liftingCapacity) {
         log.info("Freight carriage with number: {} is creating ...", number);
-        checkArgument(liftingСapacity > 0,
+        checkArgument(liftingCapacity > 0,
                 "Lifting capacity must be more that zero");
-        FreightCarriage f = new FreightCarriage(number, liftingСapacity);
+        FreightCarriage f = new FreightCarriage(number, liftingCapacity);
         log.info("Freight carriage with number: {} was successfully created", number);
         return f;
     }
@@ -32,7 +32,7 @@ public class FreightCarriage extends Carriage {
         log.info("Loading cargo: {} into freight carriage: {} ...",
                 cargo.getId(),
                 this.getNumber());
-        checkArgument(cargo.getWeight() <= liftingСapacity,
+        checkArgument(cargo.getWeight() <= liftingCapacity,
                 "Cargo is too heavy");
         checkArgument(this.cargo == null,
                 "Carriage is already loaded");
