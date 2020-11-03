@@ -3,6 +3,8 @@ package by.bychenok.cargo.entity;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Slf4j
@@ -23,5 +25,18 @@ public class Cargo {
         Cargo c =  new Cargo(id, weight);
         log.info("Cargo with id: {} was successfully created", id);
         return c;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cargo cargo = (Cargo) o;
+        return id == cargo.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
