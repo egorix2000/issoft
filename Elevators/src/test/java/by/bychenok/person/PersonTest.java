@@ -43,9 +43,9 @@ class PersonTest {
     void Person_success() {
         //GIVEN
         UUID uuid = UUID.randomUUID();
-        int weight = 10;
+        int weight = 1;
         int floor = 2;
-        int destinationFloor = 5;
+        int destinationFloor = 3;
 
         //EXPECT
         assertDoesNotThrow(
