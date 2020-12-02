@@ -3,6 +3,7 @@ package by.bychenok.person;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -29,4 +30,16 @@ public class Person {
                 uuid.toString(), weight, floor);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return uuid.equals(person.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
+    }
 }
