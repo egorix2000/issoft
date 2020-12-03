@@ -1,13 +1,16 @@
 package by.bychenok.building.floor;
 
+import by.bychenok.building.elevator.ElevatorRequest;
+import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.person.Person;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
-import static com.google.common.base.Preconditions.*;
+import static by.bychenok.building.elevator.Direction.*;
 
 @Slf4j
 public class Floor {
@@ -17,8 +20,14 @@ public class Floor {
     private final Queue<Person> peopleUp;
     private final Queue<Person> peopleDown;
     private final int number;
+    private final BlockingQueue<ElevatorRequest> requests;
+    private final ElevatorsManager elevatorsManager;
 
-    public Floor(int number) {
+    public Floor(int number,
+                 BlockingQueue<ElevatorRequest> requests,
+                 ElevatorsManager elevatorsManager) {
+        this.requests = requests;
+        this.elevatorsManager = elevatorsManager;
         this.isUpPressed = false;
         this.isDownPressed = false;
         peopleUp = new LinkedList<>();
@@ -28,43 +37,64 @@ public class Floor {
 
     public void pressUp() {
         isUpPressed = true;
+        requests.add(new ElevatorRequest(number, UP));
         log.info("Button UP was pressed on {} floor", number);
     }
 
     public void pressDown() {
         isDownPressed = true;
+        addRequestAndNotifyManger(new ElevatorRequest(number, DOWN));
         log.info("Button DOWN was pressed on {} floor", number);
     }
 
-    public synchronized void addToUpQueue(Person person) {
+    private void addRequestAndNotifyManger(ElevatorRequest request) {
+        requests.add(request);
+        if (requests.size() == 1) {
+            elevatorsManager.manageNewTask();
+        }
+    }
+
+    public void addToUpQueue(Person person) {
         peopleUp.add(person);
+        if (peopleUp.size() == 1) {
+            pressUp();
+        }
         log.info("Person with uuid {} was added to up queue on {} floor", person.getUuid(), number);
     }
 
-    public synchronized void addToDownQueue(Person person) {
+    public void addToDownQueue(Person person) {
         peopleDown.add(person);
+        if (peopleDown.size() == 1) {
+            pressDown();
+        }
         log.info("Person with uuid {} was added to down queue on {} floor", person.getUuid(), number);
     }
 
-    public synchronized Person peekFromUpQueue() {
+    public Person peekFromUpQueue() {
         return peopleUp.peek();
     }
 
-    public synchronized Person peekFromDownQueue() {
+    public Person peekFromDownQueue() {
         return peopleDown.peek();
     }
 
-    public synchronized Person pollFromUpQueue() {
-        checkState(!peopleUp.isEmpty(), "Up queue is empty");
+    public Person pollFromUpQueue() {
         Person p = peopleUp.poll();
-        log.info("Person with uuid {} was removed from up queue on {} floor", p.getUuid(), number);
+        if (p != null) {
+            log.info("Person with uuid {} was removed from up queue on {} floor. ",
+                    p.getUuid(),
+                    number);
+        }
         return p;
     }
 
-    public synchronized Person pollFromDownQueue() {
-        checkState(!peopleDown.isEmpty(), "Down queue is empty");
+    public Person pollFromDownQueue() {
         Person p = peopleDown.poll();
-        log.info("Person with uuid {} was removed from down queue on {} floor", p.getUuid(), number);
+        if (p != null) {
+            log.info("Person with uuid {} was removed from down queue on {} floor",
+                    p.getUuid(),
+                    number);
+        }
         return p;
     }
 

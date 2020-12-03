@@ -27,8 +27,8 @@ public class PersonGenerator {
 
     public Person generateRandomPerson() {
         UUID uuid = UUID.randomUUID();
-        int weight = ThreadLocalRandom.current().nextInt(minWeight, maxWeight+1);
-        int currentFloor = ThreadLocalRandom.current().nextInt(minFloor, maxFloor+1);
+        int weight = ThreadLocalRandom.current().nextInt(minWeight, maxWeight);
+        int currentFloor = ThreadLocalRandom.current().nextInt(minFloor, maxFloor);
         int destinationFloor = RandomNumberGenerator.generateNumberInRangeWithoutValue(
                 minFloor, maxFloor, currentFloor);
         return new Person(uuid, weight, currentFloor, destinationFloor);

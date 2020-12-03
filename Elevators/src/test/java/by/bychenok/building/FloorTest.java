@@ -1,32 +1,39 @@
 package by.bychenok.building;
 
+import by.bychenok.building.elevator.ElevatorRequest;
+import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.floor.Floor;
 import by.bychenok.person.Person;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FloorTest {
 
     @Test
-    void pollFromUpQueue_empty_fail() {
+    void pollFromUpQueue_empty_success() {
         // Add to down queue, poll from up queue
         //GIVEN
-        Floor floor = new Floor(2);
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        ElevatorsManager elevatorsManager = new ElevatorsManager(requests, 10);
+        Floor floor = new Floor(2, requests, elevatorsManager);
         Person downPerson = new Person(UUID.randomUUID(), 1, 3, 2);
         floor.addToDownQueue(downPerson);
 
         //EXPECT
-        assertThrows(IllegalStateException.class,
-                floor::pollFromUpQueue);
+        assertNull(floor.pollFromUpQueue());
     }
 
     @Test
     void pollFromUpQueue_success() {
         //GIVEN
-        Floor floor = new Floor(2);
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        ElevatorsManager elevatorsManager = new ElevatorsManager(requests, 10);
+        Floor floor = new Floor(2, requests, elevatorsManager);
         Person person = new Person(UUID.randomUUID(), 1, 1, 2);
         floor.addToUpQueue(person);
         Person pooledPerson = floor.pollFromUpQueue();
@@ -37,22 +44,26 @@ class FloorTest {
     }
 
     @Test
-    void pollFromDownQueue_empty_fail() {
+    void pollFromDownQueue_empty_success() {
         // Add to up queue, poll from down queue
         //GIVEN
-        Floor floor = new Floor(2);
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        ElevatorsManager elevatorsManager = new ElevatorsManager(requests, 10);
+        Floor floor = new Floor(2, requests, elevatorsManager);
         Person upPerson = new Person(UUID.randomUUID(), 1, 1, 3);
         floor.addToUpQueue(upPerson);
 
         //EXPECT
-        assertThrows(IllegalStateException.class,
-                floor::pollFromDownQueue);
+        assertNull(floor.pollFromDownQueue());
+
     }
 
     @Test
     void pollFromDownQueue_success() {
         //GIVEN
-        Floor floor = new Floor(2);
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        ElevatorsManager elevatorsManager = new ElevatorsManager(requests, 10);
+        Floor floor = new Floor(2, requests, elevatorsManager);
         Person person = new Person(UUID.randomUUID(), 1, 4, 2);
         floor.addToDownQueue(person);
         Person pooledPerson = floor.pollFromDownQueue();

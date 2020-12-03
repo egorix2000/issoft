@@ -3,9 +3,13 @@ package by.bychenok.building.elevator;
 import by.bychenok.person.Person;
 import lombok.AccessLevel;
 import lombok.Getter;
+import sun.security.x509.AVA;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 import static by.bychenok.building.elevator.Direction.*;
 import static by.bychenok.building.elevator.ElevatorState.*;
@@ -19,6 +23,7 @@ public class Elevator implements Runnable {
     private ElevatorState state;
     private int currentFloor;
     private Direction direction;
+    private final BlockingQueue<ElevatorRequest> requests;
 
     @Getter(AccessLevel.NONE)
     private final List<Person> people;
@@ -27,15 +32,21 @@ public class Elevator implements Runnable {
 
 
     public Elevator(int liftingCapacity, int doorOpenCloseTimeSeconds,
-                    int floorPassTimeSeconds, int currentFloor) {
+                    int floorPassTimeSeconds, int currentFloor,
+                    BlockingQueue<ElevatorRequest> requests) {
         this.liftingCapacity = liftingCapacity;
         this.doorOpenCloseTimeSeconds = doorOpenCloseTimeSeconds;
         this.floorPassTimeSeconds = floorPassTimeSeconds;
         this.currentFloor = currentFloor;
+        this.requests = requests;
         people = new ArrayList<>();
         stopFloors = new ArrayList<>();
         state = AVAILABLE;
         direction = STATIC;
+    }
+
+    public boolean isAvailable() {
+        return state == AVAILABLE;
     }
 
     public void pickUpPassenger(int floor) {
@@ -47,6 +58,6 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
-        
+
     }
 }

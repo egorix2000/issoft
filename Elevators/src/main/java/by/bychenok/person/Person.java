@@ -26,8 +26,8 @@ public class Person {
         this.weight = weight;
         this.currentFloor = floor;
         this.destinationFloor = destinationFloor;
-        log.info("User with uuid: {}, weight: {}, floor: {} was successfully created",
-                uuid.toString(), weight, floor);
+        log.info("User with uuid: {}, weight: {}, floor: {}, destination floor: {}  was successfully created",
+                uuid.toString(), weight, floor, destinationFloor);
     }
 
     @Override
