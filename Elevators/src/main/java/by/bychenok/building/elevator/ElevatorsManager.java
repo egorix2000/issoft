@@ -23,12 +23,13 @@ public class ElevatorsManager implements Runnable {
                             int doorOpenCloseTimeSeconds,
                             int floorPassTimeSeconds,
                             int startElevatorFloor,
+                            int liftingCapacity,
                             FloorSystem floorSystem) {
         this.requests = requests;
         elevators = ImmutableList.copyOf(IntStream
                 .range(0, elevatorCount)
                 .mapToObj(i -> new Elevator(i, doorOpenCloseTimeSeconds,
-                        floorPassTimeSeconds, startElevatorFloor,
+                        floorPassTimeSeconds, startElevatorFloor, liftingCapacity,
                         floorSystem, this))
                 .collect(Collectors.toList()));
     }

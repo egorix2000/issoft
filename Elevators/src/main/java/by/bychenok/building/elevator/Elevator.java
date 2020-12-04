@@ -39,14 +39,15 @@ public class Elevator implements Runnable {
     public Elevator(int id,
                     int doorOpenCloseTimeSeconds,
                     int floorPassTimeSeconds,
-                    int currentFloor,
+                    int startFloor,
+                    int liftingCapacity,
                     FloorSystem floorSystem,
                     ElevatorsManager elevatorsManager) {
+        this.id = id;
         this.doorOpenCloseTimeSeconds = doorOpenCloseTimeSeconds;
         this.floorPassTimeSeconds = floorPassTimeSeconds;
-        this.currentFloor = currentFloor;
+        this.currentFloor = startFloor;
         this.floorSystem = floorSystem;
-        this.id = id;
         this.elevatorsManager = elevatorsManager;
         people = new ArrayList<>();
         stopFloors = new HashSet<>();

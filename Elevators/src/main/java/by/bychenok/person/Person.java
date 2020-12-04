@@ -13,13 +13,16 @@ public class Person {
     private final UUID uuid;
     private final int currentFloor;
     private final int destinationFloor;
+    private final int weight;
 
-    public Person(UUID uuid, int floor, int destinationFloor) {
+    public Person(UUID uuid, int floor, int destinationFloor, int weight) {
         this.uuid = uuid;
         this.currentFloor = floor;
         this.destinationFloor = destinationFloor;
-        log.info("User with uuid: {}, floor: {}, destination floor: {}  was successfully created",
-                uuid.toString(), floor, destinationFloor);
+        this.weight = weight;
+        log.info("User with uuid: {}, floor: {}, " +
+                        "destination floor: {}, weight: {}  was successfully created",
+                uuid.toString(), floor, destinationFloor, weight);
     }
 
     @Override

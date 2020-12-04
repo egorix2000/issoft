@@ -26,9 +26,12 @@ public class Building {
                 config.getDoorOpenCloseTimeSeconds(),
                 config.getFloorPassTimeSeconds(),
                 config.getStartElevatorFloor(),
+                config.getLiftingCapacity(),
                 floorSystem);
         personGenerator = new PersonGenerator(BuildingConfig.MIN_FLOOR,
-                config.getNumberOfFloors());
+                config.getNumberOfFloors(),
+                config.getMinPersonWeight(),
+                config.getMaxPersonWeight());
         generatePeopleExecutor  = Executors.newSingleThreadExecutor();
         manageElevatorsExecutor = Executors.newSingleThreadExecutor();
     }

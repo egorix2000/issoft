@@ -13,6 +13,8 @@ public class BuildingConfig {
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
     private final int startElevatorFloor;
+    private final int minPersonWeight;
+    private final int maxPersonWeight;
 
     /**
      * Creates new building configuration with
@@ -21,7 +23,8 @@ public class BuildingConfig {
     public BuildingConfig(int numberOfFloors, int numberOfElevators,
                           int minSecondsIntervalBetweenPersons, int maxSecondsIntervalBetweenPersons,
                           int liftingCapacity, int doorOpenCloseTimeSeconds,
-                          int floorPassTimeSeconds, int startElevatorFloor) {
+                          int floorPassTimeSeconds, int startElevatorFloor,
+                          int minPersonWeight, int maxPersonWeight) {
         this.numberOfFloors = numberOfFloors;
         this.numberOfElevators = numberOfElevators;
         this.minSecondsIntervalBetweenPersons = minSecondsIntervalBetweenPersons;
@@ -30,5 +33,7 @@ public class BuildingConfig {
         this.doorOpenCloseTimeSeconds = doorOpenCloseTimeSeconds;
         this.floorPassTimeSeconds = floorPassTimeSeconds;
         this.startElevatorFloor = startElevatorFloor;
+        this.minPersonWeight = minPersonWeight;
+        this.maxPersonWeight = maxPersonWeight;
     }
 }

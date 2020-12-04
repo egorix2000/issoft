@@ -14,7 +14,9 @@ public class Main {
                 100,
                 1,
                 2,
-                0);
+                0,
+                20,
+                80);
         Building building = new Building(config);
         building.start();
     }

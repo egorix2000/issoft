@@ -10,10 +10,14 @@ public class PersonGenerator {
 
     private final int minFloor;
     private final int maxFloor;
+    private final int minWeight;
+    private final int maxWeight;
 
-    public PersonGenerator(int minFloor, int maxFloor) {
+    public PersonGenerator(int minFloor, int maxFloor, int minWeight, int maxWeight) {
         this.minFloor = minFloor;
         this.maxFloor = maxFloor;
+        this.minWeight = minWeight;
+        this.maxWeight = maxWeight;
     }
 
     public Person generateRandomPerson() {
@@ -21,7 +25,8 @@ public class PersonGenerator {
         int currentFloor = ThreadLocalRandom.current().nextInt(minFloor, maxFloor);
         int destinationFloor = RandomNumberGenerator
                 .generateNumberInRangeWithoutValue(minFloor, maxFloor, currentFloor);
-        return new Person(uuid, currentFloor, destinationFloor);
+        int weight = ThreadLocalRandom.current().nextInt(minWeight, maxWeight);
+        return new Person(uuid, currentFloor, destinationFloor, weight);
     }
 
 }
