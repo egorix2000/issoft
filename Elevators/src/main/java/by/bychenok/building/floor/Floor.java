@@ -55,6 +55,7 @@ public class Floor {
     @SneakyThrows
     private void addRequestAndNotifyManger(ElevatorRequest request, ElevatorsManager elevatorsManager) {
         requests.put(request);
+        log.info("Request: {} was added. Tasks left: {}", request.getId(), requests.size());
         if (requests.size() == 1) {
             elevatorsManager.manageNewTask();
         }
