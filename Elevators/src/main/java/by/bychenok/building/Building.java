@@ -1,48 +1,50 @@
 package by.bychenok.building;
 
-import by.bychenok.building.elevator.Elevator;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.floor.FloorSystem;
 import by.bychenok.person.Person;
 import by.bychenok.person.PersonGenerator;
-import lombok.SneakyThrows;
 
 import java.util.concurrent.*;
 
-import static java.lang.Thread.sleep;
 
 public class Building {
     BuildingConfig config;
     private final FloorSystem floorSystem;
     private final PersonGenerator personGenerator;
     private final Executor generatePeopleExecutor;
+    private final Executor manageElevatorsExecutor;
     private final ElevatorsManager elevatorsManager;
-
-    private final BlockingQueue<ElevatorRequest> requests;
 
     public Building(BuildingConfig config) {
         this.config = config;
-        requests = new LinkedBlockingQueue<>();
-        elevatorsManager = new ElevatorsManager(requests, config.getNumberOfElevators());
-        floorSystem = new FloorSystem(config.getNumberOfFloors(), requests, elevatorsManager);
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        floorSystem = new FloorSystem(config.getNumberOfFloors(), requests);
+        elevatorsManager = new ElevatorsManager(requests,
+                config.getNumberOfElevators(),
+                config.getDoorOpenCloseTimeSeconds(),
+                config.getFloorPassTimeSeconds(),
+                floorSystem);
         personGenerator = new PersonGenerator(BuildingConfig.MIN_FLOOR,
-                config.getNumberOfFloors(),
-                config.getMinPersonWeight(),
-                config.getMaxPersonWeight());
+                config.getNumberOfFloors());
         generatePeopleExecutor  = Executors.newSingleThreadExecutor();
+        manageElevatorsExecutor = Executors.newSingleThreadExecutor();
     }
 
     public void start() {
+        elevatorsManager.startElevators();
+        manageElevatorsExecutor.execute(elevatorsManager);
         generatePeopleExecutor.execute(getPeopleGenerator());
     }
 
-
     private Runnable getPeopleGenerator() {
-        Runnable generate = () -> {
+        return () -> {
             while (!Thread.interrupted()) {
                 Person p = personGenerator.generateRandomPerson();
-                floorSystem.addPerson(p);
+                if (p.getCurrentFloor() != p.getDestinationFloor()) {
+                    floorSystem.addPerson(p, elevatorsManager);
+                }
                 int sleepTime = ThreadLocalRandom.current().nextInt(
                         config.getMinSecondsIntervalBetweenPersons(),
                         config.getMaxSecondsIntervalBetweenPersons());
@@ -53,7 +55,6 @@ public class Building {
                 }
             }
         };
-        return generate;
     }
 
 }

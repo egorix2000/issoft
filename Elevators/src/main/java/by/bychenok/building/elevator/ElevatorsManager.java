@@ -1,27 +1,47 @@
 package by.bychenok.building.elevator;
 
+import by.bychenok.building.floor.FloorSystem;
+import com.google.common.collect.ImmutableList;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static by.bychenok.building.elevator.Direction.*;
+
+@Slf4j
 public class ElevatorsManager implements Runnable {
     private final BlockingQueue<ElevatorRequest> requests;
     private final List<Elevator> elevators;
-    private Lock lock;
 
-    public ElevatorsManager(BlockingQueue<ElevatorRequest> requests, int elevatorCount) {
+    public ElevatorsManager(BlockingQueue<ElevatorRequest> requests,
+                            int elevatorCount,
+                            int doorOpenCloseTimeSeconds,
+                            int floorPassTimeSeconds,
+                            FloorSystem floorSystem) {
         this.requests = requests;
-        // MAKE IMMUTABLE
-        elevators = new ArrayList<>(elevatorCount);
-        lock = new ReentrantLock();
+        elevators = ImmutableList.copyOf(IntStream
+                .range(0, elevatorCount)
+                .mapToObj(i -> new Elevator(doorOpenCloseTimeSeconds,
+                        floorPassTimeSeconds, 0,
+                        floorSystem, i, this))
+                .collect(Collectors.toList()));
     }
 
     public void manageNewTask() {
-        notifyAll();
+        synchronized (this) {
+            notifyAll();
+        }
+    }
+
+    public void startElevators() {
+        elevators.stream()
+                .map(Thread::new)
+                .forEach(Thread::start);
     }
 
     @SneakyThrows
@@ -30,9 +50,48 @@ public class ElevatorsManager implements Runnable {
         while (!Thread.interrupted()) {
             while (!requests.isEmpty()) {
                 ElevatorRequest request = requests.take();
+                log.info("New request: {} taken by manager. Tasks left: {}",
+                        request.getId(), requests.size());
+                AtomicReference<Boolean> isManaged = new AtomicReference<>(false);
+                while (!isManaged.get()) {
+                    elevators.stream()
+                            .filter(Elevator::isAvailable)
+                            .findAny().ifPresent(elevator -> {
+                                elevator.pickUpPassenger(request);
+                                isManaged.set(true);
+                            });
 
+                    if (!isManaged.get()) {
+                        if (request.getDirection() == UP) {
+                            elevators.stream()
+                                    .filter(Elevator::isCarryingUp)
+                                    .filter(elevator -> elevator.getCurrentFloor() < request.getFloor())
+                                    .findAny()
+                                    .ifPresent(elevator -> {
+                                        elevator.pickUpPassenger(request);
+                                        isManaged.set(true);
+                                    });
+                        } else {
+                            elevators.stream()
+                                    .filter(Elevator::isCarryingDown)
+                                    .filter(elevator -> elevator.getCurrentFloor() > request.getFloor())
+                                    .findAny()
+                                    .ifPresent(elevator -> {
+                                        elevator.pickUpPassenger(request);
+                                        isManaged.set(true);
+                                    });
+                        }
+                    }
+                    synchronized (this) {
+                        if (!isManaged.get()) {
+                            wait();
+                        }
+                    }
+                }
             }
-            lock.unlock();
+            synchronized (this) {
+                wait();
+            }
         }
     }
 }

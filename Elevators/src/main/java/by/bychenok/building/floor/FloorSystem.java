@@ -14,21 +14,24 @@ public class FloorSystem {
     private final List<Floor> floors;
 
     public FloorSystem(int numberOfFloors,
-                       BlockingQueue<ElevatorRequest> requests,
-                       ElevatorsManager elevatorsManager) {
+                       BlockingQueue<ElevatorRequest> requests) {
         floors = ImmutableList.copyOf(
                 IntStream.range(0, numberOfFloors)
-                        .mapToObj(i -> new Floor(i, requests, elevatorsManager))
+                        .mapToObj(i -> new Floor(i, requests))
                         .collect(Collectors.toList()));
     }
 
-    public void addPerson(Person p) {
+    public Floor getFloor(int number) {
+        return floors.get(number);
+    }
+
+    public void addPerson(Person p, ElevatorsManager elevatorsManager) {
         int currentFloor = p.getCurrentFloor();
         int destinationFloor = p.getDestinationFloor();
         if (destinationFloor < currentFloor) {
-            floors.get(currentFloor).addToDownQueue(p);
+            floors.get(currentFloor).addToDownQueue(p, elevatorsManager);
         } else {
-            floors.get(currentFloor).addToUpQueue(p);
+            floors.get(currentFloor).addToUpQueue(p, elevatorsManager);
         }
     }
 }
