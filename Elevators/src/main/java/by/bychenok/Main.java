@@ -13,7 +13,8 @@ public class Main {
                 10,
                 100,
                 1,
-                2);
+                2,
+                0);
         Building building = new Building(config);
         building.start();
     }

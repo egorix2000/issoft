@@ -36,11 +36,11 @@ public class Elevator implements Runnable {
     private final Set<Integer> stopFloors;
 
 
-    public Elevator(int doorOpenCloseTimeSeconds,
+    public Elevator(int id,
+                    int doorOpenCloseTimeSeconds,
                     int floorPassTimeSeconds,
                     int currentFloor,
                     FloorSystem floorSystem,
-                    int id,
                     ElevatorsManager elevatorsManager) {
         this.doorOpenCloseTimeSeconds = doorOpenCloseTimeSeconds;
         this.floorPassTimeSeconds = floorPassTimeSeconds;

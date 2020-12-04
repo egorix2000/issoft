@@ -25,6 +25,7 @@ public class Building {
                 config.getNumberOfElevators(),
                 config.getDoorOpenCloseTimeSeconds(),
                 config.getFloorPassTimeSeconds(),
+                config.getStartElevatorFloor(),
                 floorSystem);
         personGenerator = new PersonGenerator(BuildingConfig.MIN_FLOOR,
                 config.getNumberOfFloors());
