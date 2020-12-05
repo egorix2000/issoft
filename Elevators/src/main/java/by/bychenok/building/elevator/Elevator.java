@@ -21,6 +21,7 @@ public class Elevator implements Runnable {
 
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
+    private final int liftingCapacity;
     private ElevatorState state;
     private int currentFloor;
     private final FloorSystem floorSystem;
@@ -43,6 +44,7 @@ public class Elevator implements Runnable {
         this.id = id;
         this.doorOpenCloseTimeSeconds = doorOpenCloseTimeSeconds;
         this.floorPassTimeSeconds = floorPassTimeSeconds;
+        this.liftingCapacity = liftingCapacity;
         this.currentFloor = startFloor;
         this.floorSystem = floorSystem;
         this.elevatorsManager = elevatorsManager;
@@ -109,20 +111,20 @@ public class Elevator implements Runnable {
                         id, people.size());
                 Floor floor = floorSystem.getFloor(currentFloor);
                 if (isCarryingDown()) {
-                    Optional<Person> p = floor.pollFromDownQueue();
+                    Optional<Person> p = floor.pollFromDownQueue(calculateMaxNewPassengerWeight());
                     while (p.isPresent()) {
                         people.add(p.get());
                         stopFloors.add(p.get().getDestinationFloor());
                         log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
-                        p = floor.pollFromDownQueue();
+                        p = floor.pollFromDownQueue(calculateMaxNewPassengerWeight());
                     }
                 } else {
-                    Optional<Person> p = floor.pollFromUpQueue();
+                    Optional<Person> p = floor.pollFromUpQueue(calculateMaxNewPassengerWeight());
                     while (p.isPresent()) {
                         people.add(p.get());
                         stopFloors.add(p.get().getDestinationFloor());
                         log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
-                        p = floor.pollFromUpQueue();
+                        p = floor.pollFromUpQueue(calculateMaxNewPassengerWeight());
                     }
                 }
                 log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
@@ -144,5 +146,15 @@ public class Elevator implements Runnable {
                 wait();
             }
         }
+    }
+
+    private int calculateMaxNewPassengerWeight() {
+        int passengersWeight = people
+                .stream()
+                .mapToInt(Person::getWeight)
+                .sum();
+        int leftLiftingCapacity = liftingCapacity - passengersWeight;
+        int maxWeight = leftLiftingCapacity + 1;
+        return maxWeight;
     }
 }

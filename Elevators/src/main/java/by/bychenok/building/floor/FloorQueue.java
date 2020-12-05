@@ -29,41 +29,29 @@ public class FloorQueue {
         people = new LinkedList<>();
     }
 
-    public void handleElevatorLeaveEvent(ElevatorsManager elevatorsManager) {
-        synchronized (people) {
-            button.reset();
-            log.info("Button {} was reset on floor: {}", direction.name(), floorNumber);
-            if (!people.isEmpty()) {
-                button.press(elevatorsManager);
-            }
-        }
-    }
-
-    @SneakyThrows
-    public void add(Person person, ElevatorsManager elevatorsManager) {
-        synchronized (people) {
-            people.add(person);
-            log.info("Person with uuid: {} was added to {} queue " +
-                    "on floor: {}. Queue length: {}",
-                    person.getUuid(), direction.name(), floorNumber, people.size());
+    public synchronized void handleElevatorLeaveEvent(ElevatorsManager elevatorsManager) {
+        button.reset();
+        log.info("Button {} was reset on floor: {}", direction.name(), floorNumber);
+        if (!people.isEmpty()) {
             button.press(elevatorsManager);
         }
     }
 
     @SneakyThrows
-    public Optional<Person> poll() {
-        synchronized (people) {
-            Optional<Person> p = Optional.ofNullable(people.poll());
-            p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
-                            "from {} queue on floor: {}. Queue length: {}",
-                    person.getUuid(), direction.name(), floorNumber, people.size()));
-            return p;
-        }
+    public synchronized void add(Person person, ElevatorsManager elevatorsManager) {
+        people.add(person);
+        log.info("Person with uuid: {} was added to {} queue " +
+                        "on floor: {}. Queue length: {}",
+                person.getUuid(), direction.name(), floorNumber, people.size());
+        button.press(elevatorsManager);
     }
 
-    public Optional<Person> peek() {
-        synchronized (people) {
-            return Optional.ofNullable(people.peek());
-        }
+    @SneakyThrows
+    public synchronized Optional<Person> poll(int maxWeight) {
+        Optional<Person> p = Optional.ofNullable(people.poll());
+        p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
+                            "from {} queue on floor: {}. Queue length: {}",
+                person.getUuid(), direction.name(), floorNumber, people.size()));
+        return p;
     }
 }

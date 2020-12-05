@@ -56,21 +56,13 @@ public class Floor {
     }
 
     @SneakyThrows
-    public Optional<Person> pollFromUpQueue() {
-        return peopleUp.poll();
+    public Optional<Person> pollFromUpQueue(int maxWeight) {
+        return peopleUp.poll(maxWeight);
     }
 
     @SneakyThrows
-    public Optional<Person> pollFromDownQueue() {
-        return peopleDown.poll();
-    }
-
-    public Optional<Person> peekFromUpQueue() {
-        return peopleUp.peek();
-    }
-
-    public Optional<Person> peekFromDownQueue() {
-        return peopleDown.peek();
+    public Optional<Person> pollFromDownQueue(int maxWeight) {
+        return peopleDown.poll(maxWeight);
     }
 
     @Override
