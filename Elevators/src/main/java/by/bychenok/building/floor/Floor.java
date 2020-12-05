@@ -18,83 +18,59 @@ public class Floor {
     @Getter
     private final int number;
 
-    private FloorButton upButton;
-    private FloorButton downButton;
-    private final Queue<Person> peopleUp;
-    private final Queue<Person> peopleDown;
+    private final FloorQueue peopleUp;
+    private final FloorQueue peopleDown;
 
     public Floor(int number, BlockingQueue<ElevatorRequest> requests) {
-        upButton = new FloorButton(UP, number, requests);
-        downButton = new FloorButton(DOWN, number, requests);
-        peopleUp = new LinkedList<>();
-        peopleDown = new LinkedList<>();
+        peopleUp = new FloorQueue(number, UP, requests);
+        peopleDown = new FloorQueue(number, DOWN, requests);
         this.number = number;
     }
 
     public void handleElevatorLeaveDownEvent(ElevatorsManager elevatorsManager) {
-        downButton.reset();
-        log.info("Button DOWN was reset on floor: {}", number);
-        synchronized (peopleDown) {
-            if (!peopleDown.isEmpty()) {
-                downButton.press(elevatorsManager);
-            }
-        }
+        peopleDown.handleElevatorLeaveEvent(elevatorsManager);
     }
 
     public void handleElevatorLeaveUpEvent(ElevatorsManager elevatorsManager) {
-        upButton.reset();
-        log.info("Button UP was reset on floor: {}", number);
-        synchronized (peopleUp) {
-            if (!peopleUp.isEmpty()) {
-                upButton.press(elevatorsManager);
-            }
+        peopleUp.handleElevatorLeaveEvent(elevatorsManager);
+    }
+
+    public void addPerson(Person person, ElevatorsManager elevatorsManager) {
+        int currentFloor = person.getCurrentFloor();
+        int destinationFloor = person.getDestinationFloor();
+        if (destinationFloor < currentFloor) {
+            addToDownQueue(person, elevatorsManager);
+        } else {
+            addToUpQueue(person, elevatorsManager);
         }
     }
 
     @SneakyThrows
-    public void addToUpQueue(Person person, ElevatorsManager elevatorsManager) {
-        synchronized (peopleUp) {
-            peopleUp.add(person);
-            log.info("Person with uuid: {} was added to up queue on floor: {}. " +
-                    "Queue length: {}", person.getUuid(), number, peopleUp.size());
-            upButton.press(elevatorsManager);
-        }
+    private void addToUpQueue(Person person, ElevatorsManager elevatorsManager) {
+        peopleUp.add(person, elevatorsManager);
     }
 
     @SneakyThrows
-    public void addToDownQueue(Person person, ElevatorsManager elevatorsManager) {
-        synchronized (peopleDown) {
-            peopleDown.add(person);
-            log.info("Person with uuid: {} was added to down queue on floor: {}. " +
-                    "Queue length: {}", person.getUuid(), number, peopleDown.size());
-            downButton.press(elevatorsManager);
-        }
+    private void addToDownQueue(Person person, ElevatorsManager elevatorsManager) {
+        peopleDown.add(person, elevatorsManager);
     }
 
     @SneakyThrows
     public Optional<Person> pollFromUpQueue() {
-        Optional<Person> p = Optional.ofNullable(peopleUp.poll());
-        p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
-                    "from up queue on floor: {}. Queue length: {}",
-                    person.getUuid(), number, peopleUp.size()));
-        return p;
+        return peopleUp.poll();
     }
 
     @SneakyThrows
     public Optional<Person> pollFromDownQueue() {
-        Optional<Person> p = Optional.ofNullable(peopleDown.poll());
-        p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
-                    "from down queue on floor: {}. Queue length: {}",
-                    person.getUuid(), number, peopleDown.size()));
-        return p;
+        return peopleDown.poll();
     }
 
     public Optional<Person> peekFromUpQueue() {
-        return Optional.ofNullable(peopleUp.peek());
+        return peopleUp.peek();
     }
 
     public Optional<Person> peekFromDownQueue() {
-        return Optional.ofNullable(peopleDown.peek());
+        return peopleDown.peek();
     }
 
     @Override

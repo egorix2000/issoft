@@ -1,8 +1,6 @@
 package by.bychenok.building.floor;
 
 import by.bychenok.building.elevator.ElevatorRequest;
-import by.bychenok.building.elevator.ElevatorsManager;
-import by.bychenok.person.Person;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -23,15 +21,5 @@ public class FloorSystem {
 
     public Floor getFloor(int number) {
         return floors.get(number);
-    }
-
-    public void addPerson(Person p, ElevatorsManager elevatorsManager) {
-        int currentFloor = p.getCurrentFloor();
-        int destinationFloor = p.getDestinationFloor();
-        if (destinationFloor < currentFloor) {
-            floors.get(currentFloor).addToDownQueue(p, elevatorsManager);
-        } else {
-            floors.get(currentFloor).addToUpQueue(p, elevatorsManager);
-        }
     }
 }

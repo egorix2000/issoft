@@ -22,7 +22,7 @@ class FloorButtonTest {
             //GIVEN
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(UP, 1, requests);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
 
             //EXPECT
@@ -38,7 +38,7 @@ class FloorButtonTest {
             //GIVEN
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(UP, 1, requests);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             button.press(elevatorsManager);
 
@@ -56,7 +56,7 @@ class FloorButtonTest {
             //GIVEN
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(UP, 1, requests);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             requests.take();
             button.press(elevatorsManager);
@@ -73,7 +73,7 @@ class FloorButtonTest {
             //GIVEN
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(UP, 1, requests);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             button.reset();
             button.press(elevatorsManager);
@@ -91,7 +91,7 @@ class FloorButtonTest {
             //GIVEN
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(UP, 1, requests);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             button.reset();
             requests.take();
@@ -113,8 +113,8 @@ class FloorButtonTest {
             //GIVEN
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button1 = new FloorButton(UP, 1, requests);
-            FloorButton button2 = new FloorButton(UP, 2, requests);
+            FloorButton button1 = new FloorButton(1, UP, requests);
+            FloorButton button2 = new FloorButton(2, UP, requests);
             button1.press(elevatorsManager);
             button2.press(elevatorsManager);
 

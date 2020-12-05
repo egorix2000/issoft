@@ -2,10 +2,6 @@ package by.bychenok.random;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import static by.bychenok.random.RandomNumberGenerator.*;
 import static org.junit.jupiter.api.Assertions.*;
 

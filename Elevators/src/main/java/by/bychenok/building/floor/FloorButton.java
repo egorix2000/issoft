@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
-import static by.bychenok.building.elevator.Direction.UP;
 
 @Slf4j
 @Getter
@@ -20,11 +19,11 @@ public class FloorButton {
     private final int floorNumber;
     private final BlockingQueue<ElevatorRequest> requests;
 
-    public FloorButton(Direction direction,
-                       int floorNumber,
+    public FloorButton(int floorNumber,
+                       Direction direction,
                        BlockingQueue<ElevatorRequest> requests) {
-        this.direction = direction;
         this.floorNumber = floorNumber;
+        this.direction = direction;
         this.requests = requests;
         isPressed = false;
     }
