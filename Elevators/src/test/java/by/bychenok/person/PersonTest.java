@@ -1,0 +1,35 @@
+package by.bychenok.person;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class PersonTest {
+
+    @Test
+    void person_negativeAndZeroWeight_fail() {
+        //GIVEN
+        int negativeWeight = -1;
+        int zeroWeight = 0;
+
+        //EXPECT
+        assertThrows(IllegalArgumentException.class,
+                () -> new Person(UUID.randomUUID(), 1, 2, negativeWeight));
+
+        //AND
+        assertThrows(IllegalArgumentException.class,
+                () -> new Person(UUID.randomUUID(), 1, 2, zeroWeight));
+    }
+
+    void person_floorEqualsDestinationFloor_fail() {
+        //GIVEN
+        int floor = 4;
+        int destinationFloor = 4;
+
+        //EXPECT
+        assertThrows(IllegalArgumentException.class,
+                () -> new Person(UUID.randomUUID(), floor, destinationFloor, 10));
+    }
+}
