@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PersonTest {
 
     @Test
-    void person_negativeAndZeroWeight_fail() {
+    void person_negativeAndZeroWeight_exceptionThrown() {
         //GIVEN
         int negativeWeight = -1;
         int zeroWeight = 0;
@@ -24,7 +24,7 @@ class PersonTest {
     }
 
     @Test
-    void person_floorEqualsDestinationFloor_fail() {
+    void person_floorEqualsDestinationFloor_exceptionThrown() {
         //GIVEN
         int floor = 4;
         int destinationFloor = 4;

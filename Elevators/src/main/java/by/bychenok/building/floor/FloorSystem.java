@@ -19,7 +19,7 @@ public class FloorSystem {
                         .collect(Collectors.toList()));
     }
 
-    public Floor getFloor(int number) {
+    public synchronized Floor getFloor(int number) {
         return floors.get(number);
     }
 }

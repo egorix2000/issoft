@@ -48,10 +48,15 @@ public class FloorQueue {
 
     @SneakyThrows
     public synchronized Optional<Person> poll(int maxWeight) {
-        Optional<Person> p = Optional.ofNullable(people.poll());
-        p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
+        Optional<Person> p = Optional.ofNullable(people.peek());
+        if (p.isPresent() && p.get().getWeight() < maxWeight) {
+            p = Optional.ofNullable(people.poll());
+            log.info("Person with uuid: {} was removed " +
                             "from {} queue on floor: {}. Queue length: {}",
-                person.getUuid(), direction.name(), floorNumber, people.size()));
-        return p;
+                    p.get().getUuid(), direction.name(), floorNumber, people.size());
+            return p;
+        } else {
+            return Optional.empty();
+        }
     }
 }

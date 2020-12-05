@@ -50,7 +50,7 @@ class FloorTest {
     }
 
     @Test
-    void addPerson_wrongFloor_fail() {
+    void addPerson_wrongFloor_exceptionThrown() {
         //GIVEN
         BlockingQueue<ElevatorRequest> elevatorRequests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);

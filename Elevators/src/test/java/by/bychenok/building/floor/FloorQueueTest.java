@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,5 +44,20 @@ class FloorQueueTest {
 
         //EXPECT
         assertEquals(requests.size(), 0);
+    }
+
+    @Test
+    void poll_heavyPerson_returnNull() {
+        //GIVEN
+        int personWeight = 10;
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
+        FloorQueue people = new FloorQueue(1, UP, requests);
+        Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
+        people.add(p, elevatorsManager);
+        Optional<Person> polled = people.poll(personWeight);
+
+        //EXPECT
+        assertFalse(polled.isPresent());
     }
 }

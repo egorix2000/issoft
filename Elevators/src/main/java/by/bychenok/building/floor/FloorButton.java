@@ -41,14 +41,10 @@ public class FloorButton {
 
     @SneakyThrows
     private void addRequestAndNotifyManger(ElevatorRequest request, ElevatorsManager elevatorsManager) {
-        synchronized (requests) {
-            requests.put(request);
-            log.info("Request: {} was added. Requests left: {}",
-                    request.getId(), requests.size());
-            if (requests.size() == 1) {
-                elevatorsManager.manageNewRequest();
-            }
-        }
+        requests.put(request);
+        log.info("Request: {} was added. Requests left: {}",
+                request.getId(), requests.size());
+        elevatorsManager.manageNewRequest();
     }
 
     public synchronized void reset() {

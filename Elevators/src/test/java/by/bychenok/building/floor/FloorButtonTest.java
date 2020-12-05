@@ -79,7 +79,7 @@ class FloorButtonTest {
             button.press(elevatorsManager);
 
             //EXPECT
-            verify(elevatorsManager, times(1)).manageNewRequest();
+            verify(elevatorsManager, times(2)).manageNewRequest();
 
             //AND
             assertEquals(requests.size(), 2);
@@ -119,7 +119,7 @@ class FloorButtonTest {
             button2.press(elevatorsManager);
 
             //EXPECT
-            verify(elevatorsManager, times(1)).manageNewRequest();
+            verify(elevatorsManager, times(2)).manageNewRequest();
 
             //AND
             assertEquals(requests.size(), 2);

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PersonGeneratorTest {
 
     @Test
-    void personGenerator_minFloorGreaterOrEqualsToMaxFloor_fail() {
+    void personGenerator_minFloorGreaterOrEqualsToMaxFloor_exceptionThrown() {
         //GIVEN
         int minFloorGreater = 4;
         int minFloorEquals = 3;
@@ -23,7 +23,7 @@ class PersonGeneratorTest {
     }
 
     @Test
-    void personGenerator_minWeightGreaterOrEqualsToMaxWeight_fail() {
+    void personGenerator_minWeightGreaterOrEqualsToMaxWeight_exceptionThrown() {
         //GIVEN
         int minWeightGreater = 41;
         int minWeightEquals = 40;

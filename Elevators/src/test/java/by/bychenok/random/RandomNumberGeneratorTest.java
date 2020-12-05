@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RandomNumberGeneratorTest {
 
     @Test
-    void generateNumberInRangeWithoutValue_minGreaterOrEqualsToMax_fail() {
+    void generateNumberInRangeWithoutValue_minGreaterOrEqualsToMax_exceptionThrown() {
         //GIVEN
         int minGreater = 10;
         int minEquals = 9;
@@ -24,7 +24,7 @@ class RandomNumberGeneratorTest {
     }
 
     @Test
-    void generateNumberInRangeWithoutValue_excludeValueNotInRange_fail() {
+    void generateNumberInRangeWithoutValue_excludeValueNotInRange_exceptionThrown() {
         //GIVEN
         int min = 5;
         int max = 10;
@@ -51,7 +51,7 @@ class RandomNumberGeneratorTest {
     }
 
     @Test
-    void generateNumberInRangeWithoutValue_rangeSingleElement_fail() {
+    void generateNumberInRangeWithoutValue_rangeSingleElement_exceptionThrown() {
         //GIVEN
         int min = 1;
         int max = 2;
