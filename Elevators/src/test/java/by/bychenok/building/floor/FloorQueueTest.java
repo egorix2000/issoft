@@ -50,14 +50,34 @@ class FloorQueueTest {
     void poll_heavyPerson_returnNull() {
         //GIVEN
         int personWeight = 10;
+        int maxWeight = 10;
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorQueue people = new FloorQueue(1, UP, requests);
         Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
         people.add(p, elevatorsManager);
-        Optional<Person> polled = people.poll(personWeight);
+        Optional<Person> polled = people.poll(maxWeight);
 
         //EXPECT
         assertFalse(polled.isPresent());
+    }
+
+    @Test
+    void poll_closeToHeavyPerson_success() {
+        //GIVEN
+        int personWeight = 10;
+        int maxWeight = 11;
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
+        FloorQueue people = new FloorQueue(1, UP, requests);
+        Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
+        people.add(p, elevatorsManager);
+        Optional<Person> polled = people.poll(maxWeight);
+
+        //EXPECT
+        assertTrue(polled.isPresent());
+
+        //AND
+        assertEquals(polled.get(), p);
     }
 }
