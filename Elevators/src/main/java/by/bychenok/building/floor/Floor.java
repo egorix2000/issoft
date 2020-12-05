@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 
 import static by.bychenok.building.elevator.Direction.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Slf4j
 public class Floor {
@@ -37,6 +38,7 @@ public class Floor {
 
     public void addPerson(Person person, ElevatorsManager elevatorsManager) {
         int currentFloor = person.getCurrentFloor();
+        checkArgument(currentFloor == number);
         int destinationFloor = person.getDestinationFloor();
         if (destinationFloor < currentFloor) {
             addToDownQueue(person, elevatorsManager);
