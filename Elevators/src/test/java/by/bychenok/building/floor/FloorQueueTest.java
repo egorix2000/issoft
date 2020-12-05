@@ -5,7 +5,6 @@ import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.person.Person;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -3,7 +3,6 @@ package by.bychenok.building.elevator;
 import by.bychenok.building.floor.Floor;
 import by.bychenok.building.floor.FloorSystem;
 import by.bychenok.person.Person;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

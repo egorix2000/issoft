@@ -8,14 +8,14 @@ public class Main {
     public static void main(String[] args) {
         BuildingConfig config = new BuildingConfig(
                 10,
-                5,
+                4,
                 0,
-                8,
+                4,
                 100,
                 1,
                 3,
                 0,
-                40,
+                30,
                 80);
         Building building = new Building(config);
         building.start();
