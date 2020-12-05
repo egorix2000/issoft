@@ -65,4 +65,20 @@ class RandomNumberGeneratorTest {
         assertThrows(IllegalArgumentException.class, () ->
                 generateNumberInRangeWithoutValue(min, max, excludeValue));
     }
+
+    @Test
+    void generateNumberInRangeWithoutValue_success() {
+        //GIVEN
+        int min = 1;
+        int max = 3;
+        int excludeValueMin = 1;
+        int excludeValue = 2;
+
+        //EXPECT
+        assertEquals(2, generateNumberInRangeWithoutValue(min, max, excludeValueMin));
+
+        //AND
+        assertEquals(1, generateNumberInRangeWithoutValue(min, max, excludeValue));
+
+    }
 }
