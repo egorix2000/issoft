@@ -16,21 +16,18 @@ import static by.bychenok.building.elevator.ElevatorState.*;
 import static com.google.common.collect.Iterables.getFirst;
 
 @Slf4j
-@Getter
 public class Elevator implements Runnable {
 
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
     private final int liftingCapacity;
     private ElevatorState state;
+    @Getter
     private int currentFloor;
     private final FloorSystem floorSystem;
     private final int id;
     private final ElevatorsManager elevatorsManager;
-
-    @Getter(AccessLevel.NONE)
     private final List<Person> people;
-    @Getter(AccessLevel.NONE)
     private final Set<Integer> stopFloors;
 
 
