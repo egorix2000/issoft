@@ -1,5 +1,6 @@
 package by.bychenok.building.floor;
 
+import by.bychenok.building.elevator.Direction;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.person.Person;
@@ -34,6 +35,22 @@ public class Floor {
         this.number = number;
     }
 
+    public void handleElevatorLeaveDownEvent(ElevatorsManager elevatorsManager) {
+        isDownPressed = false;
+        log.info("Button DOWN was reset on floor: {}", number);
+        if (!peopleDown.isEmpty()) {
+            pressDown(elevatorsManager);
+        }
+    }
+
+    public void handleElevatorLeaveUpEvent(ElevatorsManager elevatorsManager) {
+        isUpPressed = false;
+        log.info("Button UP was reset on floor: {}", number);
+        if (!peopleUp.isEmpty()) {
+            pressUp(elevatorsManager);
+        }
+    }
+
     private void pressUp(ElevatorsManager elevatorsManager) {
         isUpPressed = true;
         addRequestAndNotifyManger(
@@ -55,7 +72,8 @@ public class Floor {
     @SneakyThrows
     private void addRequestAndNotifyManger(ElevatorRequest request, ElevatorsManager elevatorsManager) {
         requests.put(request);
-        log.info("Request: {} was added. Tasks left: {}", request.getId(), requests.size());
+        log.info("Request: {} was added. Requests left: {}", request.getId(), requests.size());
+        // DANGER !!!
         if (requests.size() == 1) {
             elevatorsManager.manageNewTask();
         }
@@ -67,7 +85,7 @@ public class Floor {
             peopleUp.put(person);
             log.info("Person with uuid {} was added to up queue on {} floor. " +
                     "Queue length: {}", person.getUuid(), number, peopleUp.size());
-            if (peopleUp.size() == 1) {
+            if (!isUpPressed) {
                 pressUp(elevatorsManager);
             }
         }
@@ -79,7 +97,7 @@ public class Floor {
             peopleDown.put(person);
             log.info("Person with uuid {} was added to down queue on {} floor. " +
                     "Queue length: {}", person.getUuid(), number, peopleDown.size());
-            if (peopleDown.size() == 1) {
+            if (!isDownPressed) {
                 pressDown(elevatorsManager);
             }
         }

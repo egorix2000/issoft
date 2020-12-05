@@ -34,10 +34,8 @@ public class ElevatorsManager implements Runnable {
                 .collect(Collectors.toList()));
     }
 
-    public void manageNewTask() {
-        synchronized (this) {
-            notifyAll();
-        }
+    public synchronized void manageNewTask() {
+        notifyAll();
     }
 
     public void startElevators() {
@@ -52,7 +50,7 @@ public class ElevatorsManager implements Runnable {
         while (!Thread.interrupted()) {
             while (!requests.isEmpty()) {
                 ElevatorRequest request = requests.take();
-                log.info("New request: {} taken by manager. Tasks left: {}",
+                log.info("New request: {} taken by manager. Requests left: {}",
                         request.getId(), requests.size());
                 AtomicReference<Boolean> isManaged = new AtomicReference<>(false);
                 while (!isManaged.get()) {
@@ -86,12 +84,15 @@ public class ElevatorsManager implements Runnable {
                     }
                     synchronized (this) {
                         if (!isManaged.get()) {
+                            log.info("No elevators to handle request: {}, " +
+                                    "waiting for available elevators ...", request.getId());
                             wait();
                         }
                     }
                 }
             }
             synchronized (this) {
+                log.info("No requests to handle. Waiting for new request ...");
                 wait();
             }
         }

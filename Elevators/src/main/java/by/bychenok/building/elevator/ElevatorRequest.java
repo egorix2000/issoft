@@ -18,7 +18,7 @@ public class ElevatorRequest {
         this.floor = floor;
         this.direction = direction;
         this.id = id;
-        log.info("Request: {} with floor: {}, direction {} created",
+        log.info("Request: {} with floor: {}, direction: {} created",
                 id, floor, direction == UP ? "UP" : "DOWN");
     }
 }

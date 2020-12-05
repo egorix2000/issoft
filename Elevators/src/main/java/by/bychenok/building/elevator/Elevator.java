@@ -131,6 +131,11 @@ public class Elevator implements Runnable {
                 log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
                         id, people.size());
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
+                if (isCarryingDown()) {
+                    floor.handleElevatorLeaveDownEvent(elevatorsManager);
+                } else {
+                    floor.handleElevatorLeaveUpEvent(elevatorsManager);
+                }
                 stopFloors.remove(currentFloor);
                 log.info("Elevator: {} left floor: {}, number of passengers: {}",
                         id, currentFloor, people.size());

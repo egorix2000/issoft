@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         BuildingConfig config = new BuildingConfig(
                 20,
-                4,
+                5,
                 2,
                 10,
                 100,
