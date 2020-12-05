@@ -7,15 +7,15 @@ public class Main {
 
     public static void main(String[] args) {
         BuildingConfig config = new BuildingConfig(
-                20,
-                5,
-                2,
                 10,
+                5,
+                0,
+                8,
                 100,
                 1,
-                2,
+                3,
                 0,
-                20,
+                40,
                 80);
         Building building = new Building(config);
         building.start();

@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -18,7 +20,7 @@ import static by.bychenok.building.elevator.Direction.*;
 public class ElevatorsManager implements Runnable {
     private final BlockingQueue<ElevatorRequest> requests;
     private final List<Elevator> elevators;
-    private boolean isWaitingForNewTask;
+    private final Executor notifyExecutor;
 
     public ElevatorsManager(BlockingQueue<ElevatorRequest> requests,
                             int elevatorCount,
@@ -28,19 +30,23 @@ public class ElevatorsManager implements Runnable {
                             int liftingCapacity,
                             FloorSystem floorSystem) {
         this.requests = requests;
-        isWaitingForNewTask = true;
         elevators = ImmutableList.copyOf(IntStream
                 .range(0, elevatorCount)
                 .mapToObj(i -> new Elevator(i, doorOpenCloseTimeSeconds,
                         floorPassTimeSeconds, startElevatorFloor, liftingCapacity,
                         floorSystem, this))
                 .collect(Collectors.toList()));
+        notifyExecutor = Executors.newSingleThreadExecutor();
     }
 
-    public synchronized void manageNewRequest() {
-        if (isWaitingForNewTask) {
-            notifyAll();
-        }
+    public void manageNewRequest() {
+        notifyExecutor.execute(
+                () -> {
+                    synchronized (this) {
+                        notifyAll();
+                    }
+                }
+        );
     }
 
     public void startElevators() {
@@ -71,15 +77,17 @@ public class ElevatorsManager implements Runnable {
 
     @SneakyThrows
     @Override
-    public void run() {
+    public synchronized void run() {
         while (!Thread.interrupted()) {
             while (!requests.isEmpty()) {
-                isWaitingForNewTask = false;
                 ElevatorRequest request = requests.take();
                 log.info("New request: {} taken by manager. Requests left: {}",
                         request.getId(), requests.size());
+
                 AtomicReference<Boolean> isManaged = new AtomicReference<>(false);
+
                 while (!isManaged.get()) {
+
                     getAvailableElevator().ifPresent(elevator -> {
                                 elevator.pickUpPassenger(request);
                                 isManaged.set(true);
@@ -91,21 +99,17 @@ public class ElevatorsManager implements Runnable {
                             isManaged.set(true);
                         });
                     }
-                    synchronized (this) {
-                        if (!isManaged.get()) {
-                            log.info("No elevators to handle request: {}, " +
+
+                    if (!isManaged.get()) {
+                        log.info("No elevators to handle request: {}, " +
                                     "waiting for available elevators ...", request.getId());
-                            wait();
-                        }
+                        wait();
                     }
                 }
             }
             // DANGER
-            synchronized (this) {
-                isWaitingForNewTask = true;
-                log.info("No requests to handle. Waiting for new request ...");
-                wait();
-            }
+            log.info("No requests to handle. Waiting for new request ...");
+            wait();
         }
     }
 }

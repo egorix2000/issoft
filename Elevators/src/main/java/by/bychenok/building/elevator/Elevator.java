@@ -88,6 +88,14 @@ public class Elevator implements Runnable {
         }
     }
 
+    private Optional<Person> pollFromQueue(Floor floor) {
+        if (isCarryingDown()) {
+            return floor.pollFromDownQueue(calculateMaxNewPassengerWeight());
+        } else {
+            return floor.pollFromUpQueue(calculateMaxNewPassengerWeight());
+        }
+    }
+
     @SneakyThrows
     @Override
     public void run() {
@@ -100,42 +108,37 @@ public class Elevator implements Runnable {
                     log.info("Elevator: {} passing floor: {}, number of passengers: {}",
                             id, currentFloor, people.size());
                 }
+
                 log.info("Elevator: {} stopped on floor: {}, number of passengers: {}",
                         id, currentFloor, people.size());
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
+
                 log.info("Elevator: {} started unloading passengers. Number of passengers: {}",
                         id, people.size());
                 people.removeIf(person -> person.getDestinationFloor() == currentFloor);
                 log.info("Elevator: {} ended unloading passengers. Number of passengers: {}",
                         id, people.size());
+
                 log.info("Elevator: {} started loading passengers. Number of passengers: {}",
                         id, people.size());
                 Floor floor = floorSystem.getFloor(currentFloor);
-                if (isCarryingDown()) {
-                    Optional<Person> p = floor.pollFromDownQueue(calculateMaxNewPassengerWeight());
-                    while (p.isPresent()) {
-                        people.add(p.get());
-                        stopFloors.add(p.get().getDestinationFloor());
-                        log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
-                        p = floor.pollFromDownQueue(calculateMaxNewPassengerWeight());
-                    }
-                } else {
-                    Optional<Person> p = floor.pollFromUpQueue(calculateMaxNewPassengerWeight());
-                    while (p.isPresent()) {
-                        people.add(p.get());
-                        stopFloors.add(p.get().getDestinationFloor());
-                        log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
-                        p = floor.pollFromUpQueue(calculateMaxNewPassengerWeight());
-                    }
+                Optional<Person> p = pollFromQueue(floor);
+                while (p.isPresent()) {
+                    people.add(p.get());
+                    stopFloors.add(p.get().getDestinationFloor());
+                    log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
+                    p = pollFromQueue(floor);
                 }
                 log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
                         id, people.size());
+
                 if (isCarryingDown()) {
                     floor.handleElevatorLeaveDownEvent(elevatorsManager);
                 } else {
                     floor.handleElevatorLeaveUpEvent(elevatorsManager);
                 }
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
+
                 stopFloors.remove(currentFloor);
                 log.info("Elevator: {} left floor: {}, number of passengers: {}",
                         id, currentFloor, people.size());
@@ -155,7 +158,7 @@ public class Elevator implements Runnable {
                 .mapToInt(Person::getWeight)
                 .sum();
         int leftLiftingCapacity = liftingCapacity - passengersWeight;
-        int maxWeight = leftLiftingCapacity + 1;
-        return maxWeight;
+        int maxWeightExcluded = leftLiftingCapacity + 1;
+        return maxWeightExcluded;
     }
 }
