@@ -1,6 +1,5 @@
 package by.bychenok.building.floor;
 
-import by.bychenok.building.elevator.Direction;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.person.Person;
