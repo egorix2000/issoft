@@ -10,14 +10,15 @@ import static by.bychenok.building.elevator.Direction.*;
 @Slf4j
 @Getter
 public class ElevatorRequest {
+
+    private final UUID id;
     private final int floor;
     private final Direction direction;
-    private final UUID id;
 
-    public ElevatorRequest(int floor, Direction direction, UUID id) {
+    public ElevatorRequest(UUID id, int floor, Direction direction) {
+        this.id = id;
         this.floor = floor;
         this.direction = direction;
-        this.id = id;
         log.info("Request: {} with floor: {}, direction: {} created",
                 id, floor, direction == UP ? "UP" : "DOWN");
     }

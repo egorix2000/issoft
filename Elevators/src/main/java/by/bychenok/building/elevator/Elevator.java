@@ -8,10 +8,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static by.bychenok.building.elevator.Direction.*;
@@ -112,30 +109,30 @@ public class Elevator implements Runnable {
                         id, people.size());
                 Floor floor = floorSystem.getFloor(currentFloor);
                 if (isCarryingDown()) {
-                    Person p = floor.pollFromDownQueue();
-                    while (p != null) {
-                        people.add(p);
-                        stopFloors.add(p.getDestinationFloor());
-                        log.info("Person: {} entered elevator: {}", p.getUuid(), id);
+                    Optional<Person> p = floor.pollFromDownQueue();
+                    while (p.isPresent()) {
+                        people.add(p.get());
+                        stopFloors.add(p.get().getDestinationFloor());
+                        log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
                         p = floor.pollFromDownQueue();
                     }
                 } else {
-                    Person p = floor.pollFromUpQueue();
-                    while (p != null) {
-                        people.add(p);
-                        stopFloors.add(p.getDestinationFloor());
-                        log.info("Person: {} entered elevator: {}", p.getUuid(), id);
+                    Optional<Person> p = floor.pollFromUpQueue();
+                    while (p.isPresent()) {
+                        people.add(p.get());
+                        stopFloors.add(p.get().getDestinationFloor());
+                        log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
                         p = floor.pollFromUpQueue();
                     }
                 }
                 log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
                         id, people.size());
-                TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
                 if (isCarryingDown()) {
                     floor.handleElevatorLeaveDownEvent(elevatorsManager);
                 } else {
                     floor.handleElevatorLeaveUpEvent(elevatorsManager);
                 }
+                TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
                 stopFloors.remove(currentFloor);
                 log.info("Elevator: {} left floor: {}, number of passengers: {}",
                         id, currentFloor, people.size());
@@ -143,7 +140,7 @@ public class Elevator implements Runnable {
             synchronized (this) {
                 state = AVAILABLE;
                 log.info("Elevator: {} available", id);
-                elevatorsManager.manageNewTask();
+                elevatorsManager.manageNewRequest();
                 wait();
             }
         }

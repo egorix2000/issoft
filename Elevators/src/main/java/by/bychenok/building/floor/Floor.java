@@ -7,129 +7,94 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import static by.bychenok.building.elevator.Direction.*;
 
 @Slf4j
 public class Floor {
 
-    @Getter private boolean isUpPressed;
-    @Getter private boolean isDownPressed;
-    @Getter private final int number;
-    private final BlockingQueue<Person> peopleUp;
-    private final BlockingQueue<Person> peopleDown;
-    private final BlockingQueue<ElevatorRequest> requests;
+    @Getter
+    private final int number;
 
-    public Floor(int number,
-                 BlockingQueue<ElevatorRequest> requests) {
-        this.requests = requests;
-        this.isUpPressed = false;
-        this.isDownPressed = false;
-        peopleUp = new LinkedBlockingQueue<>();
-        peopleDown = new LinkedBlockingQueue<>();
+    private FloorButton upButton;
+    private FloorButton downButton;
+    private final Queue<Person> peopleUp;
+    private final Queue<Person> peopleDown;
+
+    public Floor(int number, BlockingQueue<ElevatorRequest> requests) {
+        upButton = new FloorButton(UP, number, requests);
+        downButton = new FloorButton(DOWN, number, requests);
+        peopleUp = new LinkedList<>();
+        peopleDown = new LinkedList<>();
         this.number = number;
     }
 
     public void handleElevatorLeaveDownEvent(ElevatorsManager elevatorsManager) {
-        isDownPressed = false;
+        downButton.reset();
         log.info("Button DOWN was reset on floor: {}", number);
-        if (!peopleDown.isEmpty()) {
-            pressDown(elevatorsManager);
+        synchronized (peopleDown) {
+            if (!peopleDown.isEmpty()) {
+                downButton.press(elevatorsManager);
+            }
         }
     }
 
     public void handleElevatorLeaveUpEvent(ElevatorsManager elevatorsManager) {
-        isUpPressed = false;
+        upButton.reset();
         log.info("Button UP was reset on floor: {}", number);
-        if (!peopleUp.isEmpty()) {
-            pressUp(elevatorsManager);
-        }
-    }
-
-    private void pressUp(ElevatorsManager elevatorsManager) {
-        isUpPressed = true;
-        addRequestAndNotifyManger(
-                new ElevatorRequest(number, UP, UUID.randomUUID()),
-                elevatorsManager
-        );
-        log.info("Button UP was pressed on {} floor", number);
-    }
-
-    private void pressDown(ElevatorsManager elevatorsManager) {
-        isDownPressed = true;
-        addRequestAndNotifyManger(
-                new ElevatorRequest(number, DOWN, UUID.randomUUID()),
-                elevatorsManager
-        );
-        log.info("Button DOWN was pressed on {} floor", number);
-    }
-
-    @SneakyThrows
-    private void addRequestAndNotifyManger(ElevatorRequest request, ElevatorsManager elevatorsManager) {
-        requests.put(request);
-        log.info("Request: {} was added. Requests left: {}", request.getId(), requests.size());
-        // DANGER !!!
-        if (requests.size() == 1) {
-            elevatorsManager.manageNewTask();
+        synchronized (peopleUp) {
+            if (!peopleUp.isEmpty()) {
+                upButton.press(elevatorsManager);
+            }
         }
     }
 
     @SneakyThrows
     public void addToUpQueue(Person person, ElevatorsManager elevatorsManager) {
         synchronized (peopleUp) {
-            peopleUp.put(person);
-            log.info("Person with uuid {} was added to up queue on {} floor. " +
+            peopleUp.add(person);
+            log.info("Person with uuid: {} was added to up queue on floor: {}. " +
                     "Queue length: {}", person.getUuid(), number, peopleUp.size());
-            if (!isUpPressed) {
-                pressUp(elevatorsManager);
-            }
+            upButton.press(elevatorsManager);
         }
     }
 
     @SneakyThrows
     public void addToDownQueue(Person person, ElevatorsManager elevatorsManager) {
         synchronized (peopleDown) {
-            peopleDown.put(person);
-            log.info("Person with uuid {} was added to down queue on {} floor. " +
+            peopleDown.add(person);
+            log.info("Person with uuid: {} was added to down queue on floor: {}. " +
                     "Queue length: {}", person.getUuid(), number, peopleDown.size());
-            if (!isDownPressed) {
-                pressDown(elevatorsManager);
-            }
+            downButton.press(elevatorsManager);
         }
     }
 
     @SneakyThrows
-    public Person pollFromUpQueue() {
-        synchronized (peopleUp) {
-            Person p;
-            if (!peopleUp.isEmpty()) {
-                p = peopleUp.take();
-                log.info("Person with uuid {} was removed from up queue on {} floor. " +
-                        "Queue length: {}", p.getUuid(), number, peopleUp.size());
-            } else {
-                p = null;
-            }
-            return p;
-        }
+    public Optional<Person> pollFromUpQueue() {
+        Optional<Person> p = Optional.ofNullable(peopleUp.poll());
+        p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
+                    "from up queue on floor: {}. Queue length: {}",
+                    person.getUuid(), number, peopleUp.size()));
+        return p;
     }
 
     @SneakyThrows
-    public Person pollFromDownQueue() {
-        synchronized (peopleDown) {
-            Person p;
-            if (!peopleDown.isEmpty()) {
-                p = peopleDown.take();
-                log.info("Person with uuid {} was removed from down queue on {} floor. " +
-                        "Queue length: {}", p.getUuid(), number, peopleDown.size());
-            } else {
-                p = null;
-            }
-            return p;
-        }
+    public Optional<Person> pollFromDownQueue() {
+        Optional<Person> p = Optional.ofNullable(peopleDown.poll());
+        p.ifPresent(person -> log.info("Person with uuid: {} was removed " +
+                    "from down queue on floor: {}. Queue length: {}",
+                    person.getUuid(), number, peopleDown.size()));
+        return p;
+    }
+
+    public Optional<Person> peekFromUpQueue() {
+        return Optional.ofNullable(peopleUp.peek());
+    }
+
+    public Optional<Person> peekFromDownQueue() {
+        return Optional.ofNullable(peopleDown.peek());
     }
 
     @Override

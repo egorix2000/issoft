@@ -17,6 +17,7 @@ import static by.bychenok.building.elevator.Direction.*;
 public class ElevatorsManager implements Runnable {
     private final BlockingQueue<ElevatorRequest> requests;
     private final List<Elevator> elevators;
+    private boolean isWaitingForNewTask;
 
     public ElevatorsManager(BlockingQueue<ElevatorRequest> requests,
                             int elevatorCount,
@@ -26,6 +27,7 @@ public class ElevatorsManager implements Runnable {
                             int liftingCapacity,
                             FloorSystem floorSystem) {
         this.requests = requests;
+        isWaitingForNewTask = true;
         elevators = ImmutableList.copyOf(IntStream
                 .range(0, elevatorCount)
                 .mapToObj(i -> new Elevator(i, doorOpenCloseTimeSeconds,
@@ -34,8 +36,10 @@ public class ElevatorsManager implements Runnable {
                 .collect(Collectors.toList()));
     }
 
-    public synchronized void manageNewTask() {
-        notifyAll();
+    public synchronized void manageNewRequest() {
+        if (isWaitingForNewTask) {
+            notifyAll();
+        }
     }
 
     public void startElevators() {
@@ -49,6 +53,7 @@ public class ElevatorsManager implements Runnable {
     public void run() {
         while (!Thread.interrupted()) {
             while (!requests.isEmpty()) {
+                isWaitingForNewTask = false;
                 ElevatorRequest request = requests.take();
                 log.info("New request: {} taken by manager. Requests left: {}",
                         request.getId(), requests.size());
@@ -91,7 +96,9 @@ public class ElevatorsManager implements Runnable {
                     }
                 }
             }
+            // DANGER
             synchronized (this) {
+                isWaitingForNewTask = true;
                 log.info("No requests to handle. Waiting for new request ...");
                 wait();
             }
