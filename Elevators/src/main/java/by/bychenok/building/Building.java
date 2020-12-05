@@ -46,9 +46,7 @@ public class Building {
         return () -> {
             while (!Thread.interrupted()) {
                 Person p = personGenerator.generateRandomPerson();
-                if (p.getCurrentFloor() != p.getDestinationFloor()) {
-                    floorSystem.addPerson(p, elevatorsManager);
-                }
+                floorSystem.addPerson(p, elevatorsManager);
                 int sleepTime = ThreadLocalRandom.current().nextInt(
                         config.getMinSecondsIntervalBetweenPersons(),
                         config.getMaxSecondsIntervalBetweenPersons());

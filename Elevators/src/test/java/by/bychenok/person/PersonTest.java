@@ -23,6 +23,7 @@ class PersonTest {
                 () -> new Person(UUID.randomUUID(), 1, 2, zeroWeight));
     }
 
+    @Test
     void person_floorEqualsDestinationFloor_fail() {
         //GIVEN
         int floor = 4;
@@ -31,5 +32,19 @@ class PersonTest {
         //EXPECT
         assertThrows(IllegalArgumentException.class,
                 () -> new Person(UUID.randomUUID(), floor, destinationFloor, 10));
+    }
+
+    @Test
+    void person_success() {
+        //GIVEN
+        int validWeight = 10;
+        int validFloor = 5;
+        int validDestinationFloor = 3;
+
+        //EXPECT
+        assertDoesNotThrow(() -> new Person(UUID.randomUUID(),
+                                            validFloor,
+                                            validDestinationFloor,
+                                            validWeight));
     }
 }

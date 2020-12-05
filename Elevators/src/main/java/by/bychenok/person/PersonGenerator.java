@@ -1,9 +1,12 @@
 package by.bychenok.person;
 
 import by.bychenok.random.RandomNumberGenerator;
+import com.google.common.base.Preconditions;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 
 public class PersonGenerator {
@@ -14,6 +17,10 @@ public class PersonGenerator {
     private final int maxWeight;
 
     public PersonGenerator(int minFloor, int maxFloor, int minWeight, int maxWeight) {
+        checkArgument(minFloor < maxFloor,
+                "Min floor must be less than max floor");
+        checkArgument(minWeight < maxWeight,
+                "Min weight must be less than max floor");
         this.minFloor = minFloor;
         this.maxFloor = maxFloor;
         this.minWeight = minWeight;
