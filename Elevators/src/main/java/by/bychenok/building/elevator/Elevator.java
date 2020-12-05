@@ -80,6 +80,14 @@ public class Elevator implements Runnable {
         }
     }
 
+    private void updateFloor() {
+        if (currentFloor > getFirst(stopFloors, 0)) {
+            currentFloor--;
+        } else {
+            currentFloor++;
+        }
+    }
+
     @SneakyThrows
     @Override
     public void run() {
@@ -87,11 +95,7 @@ public class Elevator implements Runnable {
         while (!Thread.interrupted()) {
             while (!stopFloors.isEmpty()) {
                 while (!stopFloors.contains(currentFloor)) {
-                    if (currentFloor > getFirst(stopFloors, 0)) {
-                        currentFloor--;
-                    } else {
-                        currentFloor++;
-                    }
+                    updateFloor();
                     TimeUnit.SECONDS.sleep(floorPassTimeSeconds);
                     log.info("Elevator: {} passing floor: {}, number of passengers: {}",
                             id, currentFloor, people.size());

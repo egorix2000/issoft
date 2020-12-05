@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -48,6 +49,26 @@ public class ElevatorsManager implements Runnable {
                 .forEach(Thread::start);
     }
 
+    private Optional<Elevator> getAvailableElevator() {
+        return elevators.stream()
+                .filter(Elevator::isAvailable)
+                .findAny();
+    }
+
+    private Optional<Elevator> getCarryingElevatorToHandle(ElevatorRequest request) {
+        if (request.getDirection() == UP) {
+            return elevators.stream()
+                    .filter(Elevator::isCarryingUp)
+                    .filter(elevator -> elevator.getCurrentFloor() < request.getFloor())
+                    .findAny();
+        } else {
+            return elevators.stream()
+                    .filter(Elevator::isCarryingDown)
+                    .filter(elevator -> elevator.getCurrentFloor() > request.getFloor())
+                    .findAny();
+        }
+    }
+
     @SneakyThrows
     @Override
     public void run() {
@@ -59,33 +80,16 @@ public class ElevatorsManager implements Runnable {
                         request.getId(), requests.size());
                 AtomicReference<Boolean> isManaged = new AtomicReference<>(false);
                 while (!isManaged.get()) {
-                    elevators.stream()
-                            .filter(Elevator::isAvailable)
-                            .findAny().ifPresent(elevator -> {
+                    getAvailableElevator().ifPresent(elevator -> {
                                 elevator.pickUpPassenger(request);
                                 isManaged.set(true);
                             });
 
                     if (!isManaged.get()) {
-                        if (request.getDirection() == UP) {
-                            elevators.stream()
-                                    .filter(Elevator::isCarryingUp)
-                                    .filter(elevator -> elevator.getCurrentFloor() < request.getFloor())
-                                    .findAny()
-                                    .ifPresent(elevator -> {
-                                        elevator.pickUpPassenger(request);
-                                        isManaged.set(true);
-                                    });
-                        } else {
-                            elevators.stream()
-                                    .filter(Elevator::isCarryingDown)
-                                    .filter(elevator -> elevator.getCurrentFloor() > request.getFloor())
-                                    .findAny()
-                                    .ifPresent(elevator -> {
-                                        elevator.pickUpPassenger(request);
-                                        isManaged.set(true);
-                                    });
-                        }
+                        getCarryingElevatorToHandle(request).ifPresent(elevator -> {
+                            elevator.pickUpPassenger(request);
+                            isManaged.set(true);
+                        });
                     }
                     synchronized (this) {
                         if (!isManaged.get()) {
