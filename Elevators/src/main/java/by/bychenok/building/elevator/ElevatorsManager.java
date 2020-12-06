@@ -70,8 +70,10 @@ public class ElevatorsManager implements Runnable {
 
                 while (!isManaged.get()) {
 
+                    // DANGER
                     Optional<Integer> elevatorId =
-                            elevatorSearchEngine.findElevatorToHandleRequest(elevators, request);
+                            elevatorSearchEngine.findElevatorToHandleRequest(
+                                    elevators, request);
 
                     elevatorId.ifPresent(id -> {
                         elevators.get(id).pickUpPassenger(request);

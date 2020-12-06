@@ -2,6 +2,7 @@ package by.bychenok;
 
 import by.bychenok.building.Building;
 import by.bychenok.building.BuildingConfig;
+import com.google.common.collect.ImmutableList;
 
 public class Main {
 
