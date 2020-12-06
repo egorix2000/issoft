@@ -66,7 +66,6 @@ public class ElevatorsManager implements Runnable {
 
                 while (!isManaged.get()) {
 
-                    // DANGER
                     Optional<Integer> elevatorId =
                             elevatorSearchEngine.findElevatorToHandleRequest(
                                     elevators, request);
@@ -74,8 +73,8 @@ public class ElevatorsManager implements Runnable {
                     elevatorId.ifPresent(id -> {
                         elevators.get(id).pickUpPassenger(request);
                         isManaged.set(true);
+                        elevators.get(id).unlock();
                     });
-                    // END DANGER
 
                     if (!isManaged.get()) {
                         log.info("No elevators to handle request: {}, " +

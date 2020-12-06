@@ -17,7 +17,7 @@ public class Main {
                 10,
                 4,
                 0,
-                4,
+                8,
                 30,
                 80,
                 elevatorConfig);

@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static by.bychenok.building.elevator.Direction.*;
 import static by.bychenok.building.elevator.ElevatorState.*;
@@ -22,14 +24,15 @@ public class Elevator implements Runnable {
 
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
+
     private ElevatorState state;
+    private int currentFloor;
 
     private final ElevatorPeopleSystem peopleSystem;
     private final ElevatorsManager elevatorsManager;
     private final Set<Integer> stopFloors;
 
-    @Getter
-    private int currentFloor;
+    private final ReentrantLock elevatorLock;
 
     public Elevator(int id,
                     ElevatorConfig elevatorConfig,
@@ -43,18 +46,39 @@ public class Elevator implements Runnable {
         peopleSystem = new ElevatorPeopleSystem(
                 floorSystem, id, elevatorConfig.getLiftingCapacity());
         stopFloors = new HashSet<>();
+        elevatorLock = new ReentrantLock();
         state = AVAILABLE;
     }
 
+    public void lock() {
+        elevatorLock.lock();
+    }
+
+    public void unlock() {
+        elevatorLock.unlock();
+    }
+
+    public int getCurrentFloor() {
+        checkArgument(elevatorLock.isLocked(),
+                "You must lock elevator before calling method: getCurrentFloor");
+        return currentFloor;
+    }
+
     public boolean isAvailable() {
+        checkArgument(elevatorLock.isLocked(),
+                "You must lock elevator before calling method: isAvailable");
         return state == AVAILABLE;
     }
 
     public boolean isCarryingUp() {
+        checkArgument(elevatorLock.isLocked(),
+                "You must lock elevator before calling method: isCarryingUp");
         return state == CARRYING_UP;
     }
 
     public boolean isCarryingDown() {
+        checkArgument(elevatorLock.isLocked(),
+                "You must lock elevator before calling method: isCarryingDown");
         return state == CARRYING_DOWN;
     }
 
@@ -72,6 +96,8 @@ public class Elevator implements Runnable {
     }
 
     public void pickUpPassenger(ElevatorRequest request) {
+        checkArgument(elevatorLock.isLocked(),
+                "You must lock elevator before calling method: pickUpPassenger");
         if (!isAvailable()) {
             checkArgument(checkDirection(request),
                     "Direction of request must be the same as elevator carrying direction");
@@ -104,35 +130,41 @@ public class Elevator implements Runnable {
     public void run() {
         log.info("Elevator: {} start working", id);
         while (!Thread.interrupted()) {
+            lock();
             while (!stopFloors.isEmpty()) {
+                unlock();
+                lock();
                 while (!stopFloors.contains(currentFloor)) {
-                    // DANGER
                     updateFloor();
-                    // DANGER
+                    unlock();
                     TimeUnit.SECONDS.sleep(floorPassTimeSeconds);
                     log.info("Elevator: {} passing floor: {}, number of passengers: {}",
                             id, currentFloor, peopleSystem.getNumberOfPassengers());
+                    lock();
                 }
-
+                unlock();
                 log.info("Elevator: {} stopped on floor: {}, number of passengers: {}",
                         id, currentFloor, peopleSystem.getNumberOfPassengers());
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
 
-                peopleSystem.unload(currentFloor);
+                lock();
+                    peopleSystem.unload(currentFloor);
+                    peopleSystem.load(currentFloor, stopFloors, state);
+                    peopleSystem.leaveFloor(state, currentFloor, elevatorsManager);
+                unlock();
 
-                peopleSystem.load(currentFloor, stopFloors, state);
-
-                peopleSystem.leaveFloor(state, currentFloor, elevatorsManager);
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
 
-                stopFloors.remove(currentFloor);
-                log.info("Elevator: {} left floor: {}, number of passengers: {}",
-                        id, currentFloor, peopleSystem.getNumberOfPassengers());
+                lock();
+                    stopFloors.remove(currentFloor);
+                    log.info("Elevator: {} left floor: {}, number of passengers: {}",
+                            id, currentFloor, peopleSystem.getNumberOfPassengers());
             }
             synchronized (this) {
                 state = AVAILABLE;
                 log.info("Elevator: {} available", id);
                 elevatorsManager.manageNewRequest();
+                unlock();
                 wait();
             }
         }

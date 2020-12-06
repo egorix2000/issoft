@@ -9,27 +9,46 @@ import static by.bychenok.building.elevator.Direction.UP;
 public class ElevatorSearchEngine {
 
     private Optional<Integer> getAvailableElevatorId(List<Elevator> elevators) {
-        return elevators.stream()
-                .filter(Elevator::isAvailable)
-                .map(Elevator::getId)
-                .findAny();
+        Optional<Integer> id = Optional.empty();
+        for (Elevator elevator : elevators) {
+            elevator.lock();
+            if (elevator.isAvailable()) {
+                id = Optional.of(elevator.getId());
+                break;
+            } else {
+                elevator.unlock();
+            }
+        }
+        return id;
     }
 
     private Optional<Integer> getCarryingElevatorToHandleId(List<Elevator> elevators,
                                                            ElevatorRequest request) {
-        Stream<Elevator> suitableElevators;
+        Optional<Integer> id = Optional.empty();
         if (request.getDirection() == UP) {
-            suitableElevators = elevators.stream()
-                    .filter(Elevator::isCarryingUp)
-                    .filter(elevator -> elevator.getCurrentFloor() < request.getFloor());
+            for (Elevator elevator : elevators) {
+                elevator.lock();
+                    if (elevator.isCarryingUp()
+                            && elevator.getCurrentFloor() < request.getFloor()) {
+                        id = Optional.of(elevator.getId());
+                        break;
+                } else {
+                    elevator.unlock();
+                }
+            }
         } else {
-            suitableElevators = elevators.stream()
-                    .filter(Elevator::isCarryingDown)
-                    .filter(elevator -> elevator.getCurrentFloor() > request.getFloor());
+            for (Elevator elevator : elevators) {
+                elevator.lock();
+                    if (elevator.isCarryingDown()
+                            && elevator.getCurrentFloor() > request.getFloor()) {
+                        id = Optional.of(elevator.getId());
+                        break;
+                } else {
+                    elevator.unlock();
+                }
+            }
         }
-        return suitableElevators
-                .map(Elevator::getId)
-                .findAny();
+        return id;
     }
 
     public Optional<Integer> findElevatorToHandleRequest(List<Elevator> elevators,

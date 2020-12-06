@@ -28,10 +28,12 @@ class ElevatorTest {
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, DOWN);
-        elevator.pickUpPassenger(request);
+        elevator.lock();
+            elevator.pickUpPassenger(request);
 
-        //EXPECT
-        assertTrue(elevator.isCarryingDown());
+            //EXPECT
+            assertTrue(elevator.isCarryingDown());
+        elevator.unlock();
     }
 
     @Test
@@ -50,10 +52,12 @@ class ElevatorTest {
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, UP);
-        elevator.pickUpPassenger(request);
+        elevator.lock();
+            elevator.pickUpPassenger(request);
 
-        //EXPECT
-        assertTrue(elevator.isCarryingUp());
+            //EXPECT
+            assertTrue(elevator.isCarryingUp());
+        elevator.unlock();
     }
 
     @Test
@@ -73,11 +77,13 @@ class ElevatorTest {
                 elevatorsManager);
         ElevatorRequest requestUp = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         ElevatorRequest requestDown = new ElevatorRequest(UUID.randomUUID(), 1, DOWN);
-        elevator.pickUpPassenger(requestUp);
+        elevator.lock();
+            elevator.pickUpPassenger(requestUp);
 
-        //EXPECT
-        assertThrows(IllegalArgumentException.class,
-                () -> elevator.pickUpPassenger(requestDown));
+            //EXPECT
+            assertThrows(IllegalArgumentException.class,
+                    () -> elevator.pickUpPassenger(requestDown));
+        elevator.unlock();
     }
 
     @Test
@@ -97,10 +103,12 @@ class ElevatorTest {
                 elevatorsManager);
         ElevatorRequest requestUp = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         ElevatorRequest additionalRequestUp = new ElevatorRequest(UUID.randomUUID(), 2, UP);
-        elevator.pickUpPassenger(requestUp);
+        elevator.lock();
+            elevator.pickUpPassenger(requestUp);
 
-        //EXPECT
-        assertDoesNotThrow(() -> elevator.pickUpPassenger(additionalRequestUp));
+            //EXPECT
+            assertDoesNotThrow(() -> elevator.pickUpPassenger(additionalRequestUp));
+        elevator.unlock();
     }
 
     @Test
@@ -120,9 +128,11 @@ class ElevatorTest {
                 elevatorsManager);
         ElevatorRequest requestDown = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         ElevatorRequest additionalRequestDown = new ElevatorRequest(UUID.randomUUID(), 2, UP);
-        elevator.pickUpPassenger(requestDown);
+        elevator.lock();
+            elevator.pickUpPassenger(requestDown);
 
-        //EXPECT
-        assertDoesNotThrow(() -> elevator.pickUpPassenger(additionalRequestDown));
+            //EXPECT
+            assertDoesNotThrow(() -> elevator.pickUpPassenger(additionalRequestDown));
+        elevator.unlock();
     }
 }

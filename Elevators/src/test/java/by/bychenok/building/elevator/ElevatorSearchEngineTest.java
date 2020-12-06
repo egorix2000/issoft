@@ -72,7 +72,10 @@ class ElevatorSearchEngineTest {
         Elevator carryingElevator = new Elevator(
                 id, config, floorSystem, elevatorsManager);
         ElevatorRequest elevatorRequest = new ElevatorRequest(UUID.randomUUID(), 1, UP);
-        carryingElevator.pickUpPassenger(elevatorRequest);
+
+        carryingElevator.lock();
+            carryingElevator.pickUpPassenger(elevatorRequest);
+        carryingElevator.unlock();
 
         List<Elevator> elevators = ImmutableList.of(carryingElevator);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 3, UP);
@@ -103,7 +106,10 @@ class ElevatorSearchEngineTest {
         Elevator carryingElevator = new Elevator(
                 id, config, floorSystem, elevatorsManager);
         ElevatorRequest elevatorRequest = new ElevatorRequest(UUID.randomUUID(), 3, DOWN);
-        carryingElevator.pickUpPassenger(elevatorRequest);
+
+        carryingElevator.lock();
+            carryingElevator.pickUpPassenger(elevatorRequest);
+        carryingElevator.unlock();
 
         List<Elevator> elevators = ImmutableList.of(carryingElevator);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, DOWN);
@@ -134,7 +140,10 @@ class ElevatorSearchEngineTest {
         Elevator carryingElevatorUp = new Elevator(
                 0, configUp, floorSystem, elevatorsManager);
         ElevatorRequest elevatorUpRequest = new ElevatorRequest(UUID.randomUUID(), 4, UP);
-        carryingElevatorUp.pickUpPassenger(elevatorUpRequest);
+
+        carryingElevatorUp.lock();
+            carryingElevatorUp.pickUpPassenger(elevatorUpRequest);
+        carryingElevatorUp.unlock();
 
         int startDownElevatorFloor = 3;
         ElevatorConfig configDown = new ElevatorConfig(
@@ -146,7 +155,10 @@ class ElevatorSearchEngineTest {
         Elevator carryingElevatorDown = new Elevator(
                 0, configDown, floorSystem, elevatorsManager);
         ElevatorRequest elevatorDownRequest = new ElevatorRequest(UUID.randomUUID(), 3, DOWN);
-        carryingElevatorDown.pickUpPassenger(elevatorDownRequest);
+
+        carryingElevatorDown.lock();
+            carryingElevatorDown.pickUpPassenger(elevatorDownRequest);
+        carryingElevatorDown.unlock();
 
         List<Elevator> elevators = ImmutableList.of(carryingElevatorUp, carryingElevatorDown);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 2, UP);
