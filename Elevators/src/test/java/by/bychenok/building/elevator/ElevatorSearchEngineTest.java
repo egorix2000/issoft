@@ -103,7 +103,7 @@ class ElevatorSearchEngineTest {
     }
 
     @Test
-    void findElevatorToHandleRequest_noAvailable_returnEmpty() {
+    void findElevatorToHandleRequest_noSuitable_returnEmpty() {
         //GIVEN
         ElevatorSearchEngine searchEngine = new ElevatorSearchEngine();
         FloorSystem floorSystem = mock(FloorSystem.class);

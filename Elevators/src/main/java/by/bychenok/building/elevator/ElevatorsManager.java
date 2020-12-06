@@ -79,6 +79,7 @@ public class ElevatorsManager implements Runnable {
                         elevators.get(id).pickUpPassenger(request);
                         isManaged.set(true);
                     });
+                    // END DANGER
 
                     if (!isManaged.get()) {
                         log.info("No elevators to handle request: {}, " +

@@ -1,9 +1,6 @@
 package by.bychenok.building.elevator;
 
-import by.bychenok.building.floor.Floor;
 import by.bychenok.building.floor.FloorSystem;
-import by.bychenok.person.Person;
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +21,10 @@ public class Elevator implements Runnable {
 
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
-    private final int liftingCapacity;
     private ElevatorState state;
 
-    private final FloorSystem floorSystem;
+    private final ElevatorPeopleSystem peopleSystem;
     private final ElevatorsManager elevatorsManager;
-    private final List<Person> people;
     private final Set<Integer> stopFloors;
 
     @Getter
@@ -45,11 +40,9 @@ public class Elevator implements Runnable {
         this.id = id;
         this.doorOpenCloseTimeSeconds = doorOpenCloseTimeSeconds;
         this.floorPassTimeSeconds = floorPassTimeSeconds;
-        this.liftingCapacity = liftingCapacity;
         this.currentFloor = startFloor;
-        this.floorSystem = floorSystem;
         this.elevatorsManager = elevatorsManager;
-        people = new ArrayList<>();
+        peopleSystem = new ElevatorPeopleSystem(floorSystem, id, liftingCapacity);
         stopFloors = new HashSet<>();
         state = AVAILABLE;
     }
@@ -107,14 +100,6 @@ public class Elevator implements Runnable {
         }
     }
 
-    private Optional<Person> pollFromQueue(Floor floor) {
-        if (isCarryingDown()) {
-            return floor.pollFromDownQueue(calculateMaxNewPassengerWeight());
-        } else {
-            return floor.pollFromUpQueue(calculateMaxNewPassengerWeight());
-        }
-    }
-
     @SneakyThrows
     @Override
     public void run() {
@@ -122,45 +107,28 @@ public class Elevator implements Runnable {
         while (!Thread.interrupted()) {
             while (!stopFloors.isEmpty()) {
                 while (!stopFloors.contains(currentFloor)) {
+                    // DANGER
                     updateFloor();
+                    // DANGER
                     TimeUnit.SECONDS.sleep(floorPassTimeSeconds);
                     log.info("Elevator: {} passing floor: {}, number of passengers: {}",
-                            id, currentFloor, people.size());
+                            id, currentFloor, peopleSystem.getNumberOfPassengers());
                 }
 
                 log.info("Elevator: {} stopped on floor: {}, number of passengers: {}",
-                        id, currentFloor, people.size());
+                        id, currentFloor, peopleSystem.getNumberOfPassengers());
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
 
-                log.info("Elevator: {} started unloading passengers. Number of passengers: {}",
-                        id, people.size());
-                people.removeIf(person -> person.getDestinationFloor() == currentFloor);
-                log.info("Elevator: {} ended unloading passengers. Number of passengers: {}",
-                        id, people.size());
+                peopleSystem.unload(currentFloor);
 
-                log.info("Elevator: {} started loading passengers. Number of passengers: {}",
-                        id, people.size());
-                Floor floor = floorSystem.getFloor(currentFloor);
-                Optional<Person> p = pollFromQueue(floor);
-                while (p.isPresent()) {
-                    people.add(p.get());
-                    stopFloors.add(p.get().getDestinationFloor());
-                    log.info("Person: {} entered elevator: {}", p.get().getUuid(), id);
-                    p = pollFromQueue(floor);
-                }
-                log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
-                        id, people.size());
+                peopleSystem.load(currentFloor, stopFloors, state);
 
-                if (isCarryingDown()) {
-                    floor.handleElevatorLeaveDownEvent(elevatorsManager);
-                } else {
-                    floor.handleElevatorLeaveUpEvent(elevatorsManager);
-                }
+                peopleSystem.leaveFloor(state, currentFloor, elevatorsManager);
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
 
                 stopFloors.remove(currentFloor);
                 log.info("Elevator: {} left floor: {}, number of passengers: {}",
-                        id, currentFloor, people.size());
+                        id, currentFloor, peopleSystem.getNumberOfPassengers());
             }
             synchronized (this) {
                 state = AVAILABLE;
@@ -169,15 +137,5 @@ public class Elevator implements Runnable {
                 wait();
             }
         }
-    }
-
-    private int calculateMaxNewPassengerWeight() {
-        int passengersWeight = people
-                .stream()
-                .mapToInt(Person::getWeight)
-                .sum();
-        int leftLiftingCapacity = liftingCapacity - passengersWeight;
-        int maxWeightExcluded = leftLiftingCapacity + 1;
-        return maxWeightExcluded;
     }
 }
