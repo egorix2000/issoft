@@ -3,6 +3,7 @@ package by.bychenok.building.elevator;
 import by.bychenok.building.floor.Floor;
 import by.bychenok.building.floor.FloorSystem;
 import by.bychenok.person.Person;
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,23 +13,25 @@ import java.util.concurrent.TimeUnit;
 
 import static by.bychenok.building.elevator.Direction.*;
 import static by.bychenok.building.elevator.ElevatorState.*;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Iterables.getFirst;
 
 @Slf4j
 public class Elevator implements Runnable {
 
+    private final int id;
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
     private final int liftingCapacity;
     private ElevatorState state;
-    @Getter
-    private int currentFloor;
+
     private final FloorSystem floorSystem;
-    private final int id;
     private final ElevatorsManager elevatorsManager;
     private final List<Person> people;
     private final Set<Integer> stopFloors;
 
+    @Getter
+    private int currentFloor;
 
     public Elevator(int id,
                     int doorOpenCloseTimeSeconds,
@@ -61,10 +64,25 @@ public class Elevator implements Runnable {
         return state == CARRYING_DOWN;
     }
 
+    private boolean checkDirection(ElevatorRequest request) {
+        boolean result = false;
+        if (request.getDirection() == UP
+                && isCarryingUp()) {
+            result = true;
+        }
+        if (request.getDirection() == DOWN
+                && isCarryingDown()) {
+            result = true;
+        }
+        return result;
+    }
+
     public void pickUpPassenger(ElevatorRequest request) {
         if (!isAvailable()) {
+            checkArgument(checkDirection(request),
+                    "Direction of request must be the same as elevator carrying direction");
             stopFloors.add(request.getFloor());
-            log.info("Elevator: {} get request: {}", id, request.getId());
+            log.info("Elevator: {} get additional request: {}", id, request.getId());
         } else {
             synchronized (this) {
                 stopFloors.add(request.getFloor());

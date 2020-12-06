@@ -62,6 +62,17 @@ class FloorQueueTest {
     }
 
     @Test
+    void poll_empty_returnNull() {
+        //GIVEN
+        BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
+        FloorQueue people = new FloorQueue(1, UP, requests);
+        Optional<Person> polled = people.poll(100);
+
+        //EXPECT
+        assertFalse(polled.isPresent());
+    }
+
+    @Test
     void poll_closeToHeavyPerson_success() {
         //GIVEN
         int personWeight = 10;
