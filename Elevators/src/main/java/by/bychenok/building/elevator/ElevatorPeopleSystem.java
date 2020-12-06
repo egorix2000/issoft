@@ -14,13 +14,11 @@ import static by.bychenok.building.elevator.ElevatorState.*;
 
 @Slf4j
 public class ElevatorPeopleSystem {
-    private final FloorSystem floorSystem;
     private final List<Person> people;
     private final int elevatorId;
     private final int liftingCapacity;
 
     public ElevatorPeopleSystem(FloorSystem floorSystem, int elevatorId, int liftingCapacity) {
-        this.floorSystem = floorSystem;
         this.elevatorId = elevatorId;
         this.liftingCapacity = liftingCapacity;
         people = new ArrayList<>();
@@ -56,29 +54,27 @@ public class ElevatorPeopleSystem {
                 elevatorId, people.size());
     }
 
-    public void load(int currentFloor, Set<Integer> stopFloors, ElevatorState state) {
+    public void load(Floor currentFloor, Set<Integer> stopFloors, ElevatorState state) {
         log.info("Elevator: {} started loading passengers. Number of passengers: {}",
                 elevatorId, people.size());
-        Floor floor = floorSystem.getFloor(currentFloor);
-        Optional<Person> p = pollFromQueue(floor, state);
+        Optional<Person> p = pollFromQueue(currentFloor, state);
         while (p.isPresent()) {
             people.add(p.get());
             stopFloors.add(p.get().getDestinationFloor());
             log.info("Person: {} entered elevator: {}", p.get().getUuid(), elevatorId);
-            p = pollFromQueue(floor, state);
+            p = pollFromQueue(currentFloor, state);
         }
         log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
                 elevatorId, people.size());
     }
 
     public void leaveFloor(ElevatorState state,
-                           int currentFloor,
+                           Floor currentFloor,
                            ElevatorsManager elevatorsManager) {
-        Floor floor = floorSystem.getFloor(currentFloor);
         if (state == CARRYING_DOWN) {
-            floor.handleElevatorLeaveDownEvent(elevatorsManager);
+            currentFloor.handleElevatorLeaveDownEvent(elevatorsManager);
         } else {
-            floor.handleElevatorLeaveUpEvent(elevatorsManager);
+            currentFloor.handleElevatorLeaveUpEvent(elevatorsManager);
         }
     }
 }

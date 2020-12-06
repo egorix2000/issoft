@@ -2,7 +2,6 @@ package by.bychenok.building.elevator;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static by.bychenok.building.elevator.Direction.UP;
 

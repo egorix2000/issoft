@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static by.bychenok.building.elevator.Direction.*;
@@ -28,6 +27,7 @@ public class Elevator implements Runnable {
     private ElevatorState state;
     private int currentFloor;
 
+    private final FloorSystem floorSystem;
     private final ElevatorPeopleSystem peopleSystem;
     private final ElevatorsManager elevatorsManager;
     private final Set<Integer> stopFloors;
@@ -42,6 +42,7 @@ public class Elevator implements Runnable {
         this.doorOpenCloseTimeSeconds = elevatorConfig.getDoorOpenCloseTimeSeconds();
         this.floorPassTimeSeconds = elevatorConfig.getFloorPassTimeSeconds();
         this.currentFloor = elevatorConfig.getStartElevatorFloor();
+        this.floorSystem = floorSystem;
         this.elevatorsManager = elevatorsManager;
         peopleSystem = new ElevatorPeopleSystem(
                 floorSystem, id, elevatorConfig.getLiftingCapacity());
@@ -149,8 +150,8 @@ public class Elevator implements Runnable {
 
                 lock();
                     peopleSystem.unload(currentFloor);
-                    peopleSystem.load(currentFloor, stopFloors, state);
-                    peopleSystem.leaveFloor(state, currentFloor, elevatorsManager);
+                    peopleSystem.load(floorSystem.getFloor(currentFloor), stopFloors, state);
+                    peopleSystem.leaveFloor(state, floorSystem.getFloor(currentFloor), elevatorsManager);
                 unlock();
 
                 TimeUnit.SECONDS.sleep(doorOpenCloseTimeSeconds);
