@@ -1,9 +1,9 @@
 package by.bychenok.building.elevator;
 
+import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,9 +35,14 @@ class ElevatorSearchEngineTest {
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         int id = 0;
+        ElevatorConfig config = new ElevatorConfig(
+                0,
+                0,
+                0,
+                0
+        );
         Elevator availableElevator = new Elevator(
-                id, 0, 0, 0,
-                0, floorSystem, elevatorsManager);
+                id, config, floorSystem, elevatorsManager);
         List<Elevator> elevators = ImmutableList.of(availableElevator);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         Optional<Integer> foundElevatorId =
@@ -58,9 +63,14 @@ class ElevatorSearchEngineTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         int id = 0;
         int startFloor = 2;
+        ElevatorConfig config = new ElevatorConfig(
+                0,
+                0,
+                0,
+                startFloor
+        );
         Elevator carryingElevator = new Elevator(
-                id, 0, 0, 2,
-                0, floorSystem, elevatorsManager);
+                id, config, floorSystem, elevatorsManager);
         ElevatorRequest elevatorRequest = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         carryingElevator.pickUpPassenger(elevatorRequest);
 
@@ -84,9 +94,14 @@ class ElevatorSearchEngineTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         int id = 0;
         int startFloor = 2;
+        ElevatorConfig config = new ElevatorConfig(
+                0,
+                0,
+                0,
+                startFloor
+        );
         Elevator carryingElevator = new Elevator(
-                id, 0, 0, 2,
-                0, floorSystem, elevatorsManager);
+                id, config, floorSystem, elevatorsManager);
         ElevatorRequest elevatorRequest = new ElevatorRequest(UUID.randomUUID(), 3, DOWN);
         carryingElevator.pickUpPassenger(elevatorRequest);
 
@@ -110,16 +125,26 @@ class ElevatorSearchEngineTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
 
         int startUpElevatorFloor = 2;
+        ElevatorConfig configUp = new ElevatorConfig(
+                0,
+                0,
+                0,
+                startUpElevatorFloor
+        );
         Elevator carryingElevatorUp = new Elevator(
-                0, 0, 0, startUpElevatorFloor,
-                0, floorSystem, elevatorsManager);
+                0, configUp, floorSystem, elevatorsManager);
         ElevatorRequest elevatorUpRequest = new ElevatorRequest(UUID.randomUUID(), 4, UP);
         carryingElevatorUp.pickUpPassenger(elevatorUpRequest);
 
         int startDownElevatorFloor = 3;
+        ElevatorConfig configDown = new ElevatorConfig(
+                0,
+                0,
+                0,
+                startDownElevatorFloor
+        );
         Elevator carryingElevatorDown = new Elevator(
-                0, 0, 0, startDownElevatorFloor,
-                0, floorSystem, elevatorsManager);
+                0, configDown, floorSystem, elevatorsManager);
         ElevatorRequest elevatorDownRequest = new ElevatorRequest(UUID.randomUUID(), 3, DOWN);
         carryingElevatorDown.pickUpPassenger(elevatorDownRequest);
 

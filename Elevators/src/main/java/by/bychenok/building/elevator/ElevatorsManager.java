@@ -1,5 +1,6 @@
 package by.bychenok.building.elevator;
 
+import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
 import com.google.common.collect.ImmutableList;
 import lombok.SneakyThrows;
@@ -14,7 +15,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static by.bychenok.building.elevator.Direction.*;
 
 @Slf4j
 public class ElevatorsManager implements Runnable {
@@ -24,17 +24,13 @@ public class ElevatorsManager implements Runnable {
     private final Executor notifyExecutor;
 
     public ElevatorsManager(BlockingQueue<ElevatorRequest> requests,
-                            int elevatorCount,
-                            int doorOpenCloseTimeSeconds,
-                            int floorPassTimeSeconds,
-                            int startElevatorFloor,
-                            int liftingCapacity,
+                            int numberOfElevators,
+                            ElevatorConfig elevatorConfig,
                             FloorSystem floorSystem) {
         this.requests = requests;
         elevators = ImmutableList.copyOf(IntStream
-                .range(0, elevatorCount)
-                .mapToObj(i -> new Elevator(i, doorOpenCloseTimeSeconds,
-                        floorPassTimeSeconds, startElevatorFloor, liftingCapacity,
+                .range(0, numberOfElevators)
+                .mapToObj(i -> new Elevator(i, elevatorConfig,
                         floorSystem, this))
                 .collect(Collectors.toList()));
         notifyExecutor = Executors.newSingleThreadExecutor();

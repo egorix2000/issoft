@@ -1,5 +1,6 @@
 package by.bychenok.building;
 
+import by.bychenok.building.configuration.BuildingConfig;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.floor.FloorSystem;
@@ -23,10 +24,7 @@ public class Building {
         floorSystem = new FloorSystem(config.getNumberOfFloors(), requests);
         elevatorsManager = new ElevatorsManager(requests,
                 config.getNumberOfElevators(),
-                config.getDoorOpenCloseTimeSeconds(),
-                config.getFloorPassTimeSeconds(),
-                config.getStartElevatorFloor(),
-                config.getLiftingCapacity(),
+                config.getElevatorConfig(),
                 floorSystem);
         personGenerator = new PersonGenerator(BuildingConfig.MIN_FLOOR,
                 config.getNumberOfFloors(),

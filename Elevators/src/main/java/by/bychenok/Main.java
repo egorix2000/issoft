@@ -1,23 +1,27 @@
 package by.bychenok;
 
 import by.bychenok.building.Building;
-import by.bychenok.building.BuildingConfig;
-import com.google.common.collect.ImmutableList;
+import by.bychenok.building.configuration.BuildingConfig;
+import by.bychenok.building.configuration.ElevatorConfig;
 
 public class Main {
 
     public static void main(String[] args) {
+        ElevatorConfig elevatorConfig = new ElevatorConfig(
+                100,
+                1,
+                2,
+                0);
+
         BuildingConfig config = new BuildingConfig(
                 10,
                 4,
                 0,
                 4,
-                100,
-                1,
-                3,
-                0,
                 30,
-                80);
+                80,
+                elevatorConfig);
+
         Building building = new Building(config);
         building.start();
     }

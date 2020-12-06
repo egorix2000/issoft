@@ -1,5 +1,6 @@
 package by.bychenok.building.elevator;
 
+import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
 import org.junit.jupiter.api.Test;
 
@@ -16,11 +17,14 @@ class ElevatorTest {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
-        Elevator elevator = new Elevator(1,
-                1,
-                1,
-                0,
+        ElevatorConfig config = new ElevatorConfig(
                 100,
+                1,
+                1,
+                0
+        );
+        Elevator elevator = new Elevator(1,
+                config,
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, DOWN);
@@ -35,11 +39,14 @@ class ElevatorTest {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
-        Elevator elevator = new Elevator(1,
-                1,
-                1,
-                0,
+        ElevatorConfig config = new ElevatorConfig(
                 100,
+                1,
+                1,
+                0
+        );
+        Elevator elevator = new Elevator(1,
+                config,
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, UP);
@@ -54,11 +61,14 @@ class ElevatorTest {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
-        Elevator elevator = new Elevator(1,
-                1,
-                1,
-                0,
+        ElevatorConfig config = new ElevatorConfig(
                 100,
+                1,
+                1,
+                0
+        );
+        Elevator elevator = new Elevator(1,
+                config,
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest requestUp = new ElevatorRequest(UUID.randomUUID(), 1, UP);
@@ -75,11 +85,14 @@ class ElevatorTest {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
-        Elevator elevator = new Elevator(1,
-                1,
-                1,
-                0,
+        ElevatorConfig config = new ElevatorConfig(
                 100,
+                1,
+                1,
+                0
+        );
+        Elevator elevator = new Elevator(1,
+                config,
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest requestUp = new ElevatorRequest(UUID.randomUUID(), 1, UP);
@@ -95,11 +108,14 @@ class ElevatorTest {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
-        Elevator elevator = new Elevator(1,
-                1,
-                1,
-                0,
+        ElevatorConfig config = new ElevatorConfig(
                 100,
+                1,
+                1,
+                0
+        );
+        Elevator elevator = new Elevator(1,
+                config,
                 floorSystem,
                 elevatorsManager);
         ElevatorRequest requestDown = new ElevatorRequest(UUID.randomUUID(), 1, UP);
