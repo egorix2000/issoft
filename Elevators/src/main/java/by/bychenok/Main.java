@@ -8,15 +8,15 @@ public class Main {
 
     public static void main(String[] args) {
         ElevatorConfig elevatorConfig = new ElevatorConfig(
-                100,
-                1,
+                150,
                 2,
+                3,
                 0);
 
         BuildingConfig config = new BuildingConfig(
                 10,
                 4,
-                0,
+                3,
                 8,
                 30,
                 80,

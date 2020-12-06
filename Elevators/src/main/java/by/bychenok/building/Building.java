@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 
 public class Building {
-    BuildingConfig config;
+    private final BuildingConfig config;
     private final FloorSystem floorSystem;
     private final PersonGenerator personGenerator;
     private final Executor generatePeopleExecutor;

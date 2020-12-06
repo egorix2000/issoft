@@ -48,22 +48,4 @@ class FloorTest {
         //AND
         assertEquals(personDown, extractedPerson.get());
     }
-
-    @Test
-    void addPerson_wrongFloor_exceptionThrown() {
-        //GIVEN
-        BlockingQueue<ElevatorRequest> elevatorRequests = new LinkedBlockingQueue<>();
-        ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        int floorNumber = 3;
-        int personFloorNumber = 5;
-        Floor floor = new Floor(floorNumber, elevatorRequests);
-        Person personUp = new Person(UUID.randomUUID(),
-                personFloorNumber,
-                10,
-                10);
-
-        //EXPECT
-        assertThrows(IllegalArgumentException.class,
-                () -> floor.addPerson(personUp, elevatorsManager));
-    }
 }

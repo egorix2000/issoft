@@ -1,7 +1,6 @@
 package by.bychenok.building.elevator;
 
 import by.bychenok.building.floor.Floor;
-import by.bychenok.building.floor.FloorSystem;
 import by.bychenok.person.Person;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static by.bychenok.building.elevator.ElevatorState.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Slf4j
 public class ElevatorPeopleSystem {
@@ -55,6 +55,8 @@ public class ElevatorPeopleSystem {
     }
 
     public void load(Floor currentFloor, Set<Integer> stopFloors, ElevatorState state) {
+        checkArgument(state != AVAILABLE,
+                "Can not load during available state");
         log.info("Elevator: {} started loading passengers. Number of passengers: {}",
                 elevatorId, people.size());
         Optional<Person> p = pollFromQueue(currentFloor, state);
@@ -71,6 +73,8 @@ public class ElevatorPeopleSystem {
     public void leaveFloor(ElevatorState state,
                            Floor currentFloor,
                            ElevatorsManager elevatorsManager) {
+        checkArgument(state != AVAILABLE,
+                "Can not leave floor during available state");
         if (state == CARRYING_DOWN) {
             currentFloor.handleElevatorLeaveDownEvent(elevatorsManager);
         } else {

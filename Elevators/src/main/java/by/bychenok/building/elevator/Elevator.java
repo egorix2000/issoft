@@ -58,30 +58,42 @@ public class Elevator implements Runnable {
         elevatorLock.unlock();
     }
 
+    /**
+     * You must lock elevator before calling this method
+     * and unlock it after result of this method is no longer needed
+     */
     public int getCurrentFloor() {
-        checkArgument(elevatorLock.isLocked(),
-                "You must lock elevator before calling method: getCurrentFloor");
         return currentFloor;
     }
 
+    /**
+     * You must lock elevator before calling this method
+     * and unlock it after result of this method is no longer needed
+     */
     public boolean isAvailable() {
-        checkArgument(elevatorLock.isLocked(),
-                "You must lock elevator before calling method: isAvailable");
         return state == AVAILABLE;
     }
 
+    /**
+     * You must lock elevator before calling this method
+     * and unlock it after result of this method is no longer needed
+     */
     public boolean isCarryingUp() {
-        checkArgument(elevatorLock.isLocked(),
-                "You must lock elevator before calling method: isCarryingUp");
         return state == CARRYING_UP;
     }
 
+    /**
+     * You must lock elevator before calling this method
+     * and unlock it after result of this method is no longer needed
+     */
     public boolean isCarryingDown() {
-        checkArgument(elevatorLock.isLocked(),
-                "You must lock elevator before calling method: isCarryingDown");
         return state == CARRYING_DOWN;
     }
 
+    /**
+     * You must lock elevator before calling this method
+     * and unlock it after result of this method is no longer needed
+     */
     private boolean checkDirection(ElevatorRequest request) {
         boolean result = false;
         if (request.getDirection() == UP
@@ -96,8 +108,7 @@ public class Elevator implements Runnable {
     }
 
     public void pickUpPassenger(ElevatorRequest request) {
-        checkArgument(elevatorLock.isLocked(),
-                "You must lock elevator before calling method: pickUpPassenger");
+        lock();
         if (!isAvailable()) {
             checkArgument(checkDirection(request),
                     "Direction of request must be the same as elevator carrying direction");
@@ -115,6 +126,7 @@ public class Elevator implements Runnable {
                 notifyAll();
             }
         }
+        unlock();
     }
 
     private void updateFloor() {
