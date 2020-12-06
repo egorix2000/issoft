@@ -18,7 +18,7 @@ public class ElevatorPeopleSystem {
     private final int elevatorId;
     private final int liftingCapacity;
 
-    public ElevatorPeopleSystem(FloorSystem floorSystem, int elevatorId, int liftingCapacity) {
+    public ElevatorPeopleSystem(int elevatorId, int liftingCapacity) {
         this.elevatorId = elevatorId;
         this.liftingCapacity = liftingCapacity;
         people = new ArrayList<>();

@@ -44,8 +44,7 @@ public class Elevator implements Runnable {
         this.currentFloor = elevatorConfig.getStartElevatorFloor();
         this.floorSystem = floorSystem;
         this.elevatorsManager = elevatorsManager;
-        peopleSystem = new ElevatorPeopleSystem(
-                floorSystem, id, elevatorConfig.getLiftingCapacity());
+        peopleSystem = new ElevatorPeopleSystem(id, elevatorConfig.getLiftingCapacity());
         stopFloors = new HashSet<>();
         elevatorLock = new ReentrantLock();
         state = AVAILABLE;
