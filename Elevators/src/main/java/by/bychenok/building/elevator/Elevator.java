@@ -19,7 +19,9 @@ import static com.google.common.collect.Iterables.getFirst;
 @Slf4j
 public class Elevator implements Runnable {
 
+    @Getter
     private final int id;
+
     private final int doorOpenCloseTimeSeconds;
     private final int floorPassTimeSeconds;
     private final int liftingCapacity;

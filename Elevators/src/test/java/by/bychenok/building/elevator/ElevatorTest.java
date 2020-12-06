@@ -71,7 +71,7 @@ class ElevatorTest {
     }
 
     @Test
-    void pickUpPassenger_carryingSameDirection_success() {
+    void pickUpPassenger_carryingSameDirectionUp_success() {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
@@ -88,5 +88,25 @@ class ElevatorTest {
 
         //EXPECT
         assertDoesNotThrow(() -> elevator.pickUpPassenger(additionalRequestUp));
+    }
+
+    @Test
+    void pickUpPassenger_carryingSameDirectionDown_success() {
+        //GIVEN
+        ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
+        FloorSystem floorSystem = mock(FloorSystem.class);
+        Elevator elevator = new Elevator(1,
+                1,
+                1,
+                0,
+                100,
+                floorSystem,
+                elevatorsManager);
+        ElevatorRequest requestDown = new ElevatorRequest(UUID.randomUUID(), 1, UP);
+        ElevatorRequest additionalRequestDown = new ElevatorRequest(UUID.randomUUID(), 2, UP);
+        elevator.pickUpPassenger(requestDown);
+
+        //EXPECT
+        assertDoesNotThrow(() -> elevator.pickUpPassenger(additionalRequestDown));
     }
 }
