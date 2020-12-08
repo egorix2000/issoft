@@ -31,11 +31,11 @@ public class FloorButton {
     public synchronized void press(ElevatorsManager elevatorsManager) {
         if (!isPressed) {
             isPressed = true;
+            log.info("Button {} was pressed on floor: {}", direction.name(), floorNumber);
             addRequestAndNotifyManger(
                     new ElevatorRequest(UUID.randomUUID(), floorNumber, direction),
                     elevatorsManager
             );
-            log.info("Button {} was pressed on floor: {}", direction.name(), floorNumber);
         }
     }
 
@@ -49,6 +49,7 @@ public class FloorButton {
 
     public synchronized void reset() {
         isPressed = false;
+        log.info("Button {} was reset on floor: {}", direction.name(), floorNumber);
     }
 
 

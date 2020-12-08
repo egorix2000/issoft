@@ -140,7 +140,7 @@ public class Elevator implements Runnable {
     @SneakyThrows
     @Override
     public void run() {
-        log.info("Elevator: {} start working", id);
+        log.info("Elevator: {} started working", id);
         while (!Thread.interrupted()) {
             lock();
             while (!stopFloors.isEmpty()) {
@@ -174,11 +174,12 @@ public class Elevator implements Runnable {
             }
             synchronized (this) {
                 state = AVAILABLE;
-                log.info("Elevator: {} available", id);
+                log.info("Elevator: {} is available", id);
                 elevatorsManager.manageNewRequest();
                 unlock();
                 wait();
             }
         }
+        log.info("Elevator: {} ended working", id);
     }
 }

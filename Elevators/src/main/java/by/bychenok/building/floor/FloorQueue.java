@@ -31,7 +31,6 @@ public class FloorQueue {
 
     public synchronized void handleElevatorLeaveEvent(ElevatorsManager elevatorsManager) {
         button.reset();
-        log.info("Button {} was reset on floor: {}", direction.name(), floorNumber);
         if (!people.isEmpty()) {
             button.press(elevatorsManager);
         }
