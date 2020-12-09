@@ -20,7 +20,7 @@ class FloorTest {
         //GIVEN
         BlockingQueue<ElevatorRequest> elevatorRequests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        Floor floor = new Floor(3, elevatorRequests);
+        Floor floor = new Floor(3, elevatorRequests, 20);
         Person personUp = new Person(UUID.randomUUID(),3, 4, 10);
         floor.addPerson(personUp, elevatorsManager);
         Optional<Person> extractedPerson = floor.pollFromUpQueue(20);
@@ -37,7 +37,7 @@ class FloorTest {
         //GIVEN
         BlockingQueue<ElevatorRequest> elevatorRequests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        Floor floor = new Floor(4, elevatorRequests);
+        Floor floor = new Floor(4, elevatorRequests, 20);
         Person personDown = new Person(UUID.randomUUID(),4, 3, 10);
         floor.addPerson(personDown, elevatorsManager);
         Optional<Person> extractedPerson = floor.pollFromDownQueue(20);

@@ -1,6 +1,5 @@
 package by.bychenok.building.statistics;
 
-import by.bychenok.building.configuration.BuildingConfig;
 import by.bychenok.building.elevator.Direction;
 
 import java.util.ArrayList;
@@ -10,25 +9,39 @@ import java.util.stream.IntStream;
 
 import static by.bychenok.building.elevator.Direction.*;
 
-public class StatisticsCollector {
+public final class StatisticsCollector {
+    private static volatile StatisticsCollector instance;
+
     private final List<Integer> pressUpCountPerFloor;
     private final List<Integer> pressDownCountPerFloor;
     private final List<Integer> maxUpQueueLengthPerFloor;
     private final List<Integer> maxDownQueueLengthPerFloor;
-    private int totalLoadCount;
     private int totalOverloadCount;
 
-    public StatisticsCollector(BuildingConfig config) {
+
+    private StatisticsCollector(int numberOfFloors) {
         List<Integer> initList = IntStream
-                .range(0, config.getNumberOfFloors())
+                .range(0, numberOfFloors)
                 .mapToObj(i -> 0)
                 .collect(Collectors.toList());
         pressUpCountPerFloor = new ArrayList<>(initList);
         pressDownCountPerFloor = new ArrayList<>(initList);
         maxUpQueueLengthPerFloor = new ArrayList<>(initList);
         maxDownQueueLengthPerFloor = new ArrayList<>(initList);
-        totalLoadCount = 0;
         totalOverloadCount = 0;
+    }
+
+    public static StatisticsCollector getStatisticsCollectorInstance(int numberOfFloors) {
+        StatisticsCollector result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized(StatisticsCollector.class) {
+            if (instance == null) {
+                instance = new StatisticsCollector(numberOfFloors);
+            }
+            return instance;
+        }
     }
 
     private synchronized void addPressInList(int floorNumber, List<Integer> pressCount) {
@@ -61,10 +74,6 @@ public class StatisticsCollector {
         } else {
             updateMaxQueueInList(floorNumber, queueLength, maxDownQueueLengthPerFloor);
         }
-    }
-
-    public synchronized void addLoad() {
-        totalLoadCount++;
     }
 
     public synchronized void addOverload() {

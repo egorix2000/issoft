@@ -30,7 +30,7 @@ class ElevatorPeopleSystemTest {
         //GIVEN
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), 20);
         Set<Integer> stopFloors = new HashSet<>();
         int unloadFloor = 3;
         Person anotherFloorPerson =
@@ -49,7 +49,7 @@ class ElevatorPeopleSystemTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), 20);
         int unloadFloor = 5;
         Person person1 =
                 new Person(UUID.randomUUID(), 3, unloadFloor, 10);
@@ -70,7 +70,7 @@ class ElevatorPeopleSystemTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), 20);
         int unloadFloor = 5;
         Person personRightFloor =
                 new Person(UUID.randomUUID(), 3, unloadFloor, 10);
@@ -89,7 +89,7 @@ class ElevatorPeopleSystemTest {
     void load_empty_success() {
         //GIVEN
         ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), 20);
         Set<Integer> stopFloors = new HashSet<>();
         system.load(floor, stopFloors, CARRYING_UP);
 
@@ -115,7 +115,7 @@ class ElevatorPeopleSystemTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), 20);
         Person person1 =
                 new Person(UUID.randomUUID(), 3, 5, 10);
         Person person2 =
@@ -134,7 +134,7 @@ class ElevatorPeopleSystemTest {
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), 20);
         Person person =
                 new Person(UUID.randomUUID(), 3, 5, 50);
         Person personCloseToLimit =

@@ -4,7 +4,6 @@ import by.bychenok.building.elevator.Direction;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.statistics.StatisticsCollector;
-import by.bychenok.building.statistics.StatisticsCollectorFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 public class FloorButton {
-    private final StatisticsCollector collector = StatisticsCollectorFactory.getStatisticsCollector();
+    private final StatisticsCollector statisticsCollector;
     private boolean isPressed;
     private final Direction direction;
     private final int floorNumber;
@@ -22,18 +21,20 @@ public class FloorButton {
 
     public FloorButton(int floorNumber,
                        Direction direction,
-                       BlockingQueue<ElevatorRequest> requests) {
+                       BlockingQueue<ElevatorRequest> requests,
+                       int numberOfFloors) {
         this.floorNumber = floorNumber;
         this.direction = direction;
         this.requests = requests;
         isPressed = false;
+        statisticsCollector = StatisticsCollector.getStatisticsCollectorInstance(numberOfFloors);
     }
 
     public synchronized void press(ElevatorsManager elevatorsManager) {
         if (!isPressed) {
             isPressed = true;
             log.info("Button {} was pressed on floor: {}", direction.name(), floorNumber);
-            collector.addPress(floorNumber, direction);
+            statisticsCollector.addPress(floorNumber, direction);
             addRequestAndNotifyManger(
                     new ElevatorRequest(UUID.randomUUID(), floorNumber, direction),
                     elevatorsManager

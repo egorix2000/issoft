@@ -21,9 +21,9 @@ public class Floor {
     private final FloorQueue peopleUp;
     private final FloorQueue peopleDown;
 
-    public Floor(int number, BlockingQueue<ElevatorRequest> requests) {
-        peopleUp = new FloorQueue(number, UP, requests);
-        peopleDown = new FloorQueue(number, DOWN, requests);
+    public Floor(int number, BlockingQueue<ElevatorRequest> requests, int numberOfFloors) {
+        peopleUp = new FloorQueue(number, UP, requests, numberOfFloors);
+        peopleDown = new FloorQueue(number, DOWN, requests, numberOfFloors);
         this.number = number;
     }
 

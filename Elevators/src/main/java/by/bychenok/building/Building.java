@@ -4,7 +4,6 @@ import by.bychenok.building.configuration.BuildingConfig;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.floor.FloorSystem;
-import by.bychenok.building.statistics.StatisticsCollectorFactory;
 import by.bychenok.person.Person;
 import by.bychenok.person.PersonGenerator;
 import lombok.SneakyThrows;
@@ -16,13 +15,12 @@ public class Building {
     private final BuildingConfig config;
     private final FloorSystem floorSystem;
     private final PersonGenerator personGenerator;
-    private final Executor generatePeopleExecutor;
-    private final Executor manageElevatorsExecutor;
+    private final ExecutorService generatePeopleExecutor;
+    private final ExecutorService manageElevatorsExecutor;
     private final ElevatorsManager elevatorsManager;
 
     public Building(BuildingConfig config) {
         this.config = config;
-        StatisticsCollectorFactory.initFactory(config);
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         floorSystem = new FloorSystem(config.getNumberOfFloors(), requests);
         elevatorsManager = new ElevatorsManager(requests,
@@ -33,7 +31,7 @@ public class Building {
                 config.getNumberOfFloors(),
                 config.getMinPersonWeight(),
                 config.getMaxPersonWeight());
-        generatePeopleExecutor  = Executors.newSingleThreadExecutor();
+        generatePeopleExecutor = Executors.newSingleThreadExecutor();
         manageElevatorsExecutor = Executors.newSingleThreadExecutor();
     }
 

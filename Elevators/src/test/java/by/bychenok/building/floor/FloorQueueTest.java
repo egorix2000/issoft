@@ -23,7 +23,7 @@ class FloorQueueTest {
         //GIVEN
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests);
+        FloorQueue people = new FloorQueue(1, UP, requests, 20);
         Person p = new Person(UUID.randomUUID(), 1, 2, 10);
         people.add(p, elevatorsManager);
         requests.take();
@@ -38,7 +38,7 @@ class FloorQueueTest {
         //GIVEN
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests);
+        FloorQueue people = new FloorQueue(1, UP, requests, 20);
         people.handleElevatorLeaveEvent(elevatorsManager);
 
         //EXPECT
@@ -52,7 +52,7 @@ class FloorQueueTest {
         int maxWeight = 10;
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests);
+        FloorQueue people = new FloorQueue(1, UP, requests, 20);
         Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
         people.add(p, elevatorsManager);
         Optional<Person> polled = people.poll(maxWeight);
@@ -65,7 +65,7 @@ class FloorQueueTest {
     void poll_empty_returnNull() {
         //GIVEN
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-        FloorQueue people = new FloorQueue(1, UP, requests);
+        FloorQueue people = new FloorQueue(1, UP, requests, 20);
         Optional<Person> polled = people.poll(100);
 
         //EXPECT
@@ -79,7 +79,7 @@ class FloorQueueTest {
         int maxWeight = 11;
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests);
+        FloorQueue people = new FloorQueue(1, UP, requests, 20);
         Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
         people.add(p, elevatorsManager);
         Optional<Person> polled = people.poll(maxWeight);

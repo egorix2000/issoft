@@ -10,14 +10,14 @@ public class Main {
         ElevatorConfig elevatorConfig = new ElevatorConfig(
                 150,
                 1,
-                1,
+                2,
                 0);
 
         BuildingConfig config = new BuildingConfig(
-                8,
+                10,
                 4,
-                1,
                 3,
+                4,
                 30,
                 80,
                 elevatorConfig);

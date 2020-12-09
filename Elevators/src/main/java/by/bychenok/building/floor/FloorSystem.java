@@ -15,7 +15,7 @@ public class FloorSystem {
                        BlockingQueue<ElevatorRequest> requests) {
         floors = ImmutableList.copyOf(
                 IntStream.range(0, numberOfFloors)
-                        .mapToObj(i -> new Floor(i, requests))
+                        .mapToObj(i -> new Floor(i, requests, numberOfFloors))
                         .collect(Collectors.toList()));
     }
 
