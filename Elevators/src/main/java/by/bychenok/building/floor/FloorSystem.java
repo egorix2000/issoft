@@ -1,6 +1,7 @@
 package by.bychenok.building.floor;
 
 import by.bychenok.building.elevator.ElevatorRequest;
+import by.bychenok.building.statistics.StatisticsCollector;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -12,10 +13,11 @@ public class FloorSystem {
     private final List<Floor> floors;
 
     public FloorSystem(int numberOfFloors,
-                       BlockingQueue<ElevatorRequest> requests) {
+                       BlockingQueue<ElevatorRequest> requests,
+                       StatisticsCollector statisticsCollector) {
         floors = ImmutableList.copyOf(
                 IntStream.range(0, numberOfFloors)
-                        .mapToObj(i -> new Floor(i, requests))
+                        .mapToObj(i -> new Floor(i, requests, statisticsCollector))
                         .collect(Collectors.toList()));
     }
 

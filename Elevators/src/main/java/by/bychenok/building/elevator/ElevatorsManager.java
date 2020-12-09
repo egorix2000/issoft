@@ -2,6 +2,7 @@ package by.bychenok.building.elevator;
 
 import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
+import by.bychenok.building.statistics.StatisticsCollector;
 import com.google.common.collect.ImmutableList;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +27,13 @@ public class ElevatorsManager implements Runnable {
     public ElevatorsManager(BlockingQueue<ElevatorRequest> requests,
                             int numberOfElevators,
                             ElevatorConfig elevatorConfig,
-                            FloorSystem floorSystem) {
+                            FloorSystem floorSystem,
+                            StatisticsCollector statisticsCollector) {
         this.requests = requests;
         elevators = ImmutableList.copyOf(IntStream
                 .range(0, numberOfElevators)
                 .mapToObj(i -> new Elevator(i, elevatorConfig,
-                        floorSystem, this))
+                        floorSystem, this, statisticsCollector))
                 .collect(Collectors.toList()));
         notifyExecutor = Executors.newSingleThreadExecutor();
         elevatorSearchEngine = new ElevatorSearchEngine();

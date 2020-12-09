@@ -2,7 +2,6 @@ package by.bychenok.building.elevator;
 
 import by.bychenok.building.floor.Floor;
 import by.bychenok.building.statistics.StatisticsCollector;
-import by.bychenok.building.statistics.StatisticsCollectorFactory;
 import by.bychenok.person.Person;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,15 +15,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 @Slf4j
 public class ElevatorPeopleSystem {
-    private final StatisticsCollector collector = StatisticsCollectorFactory.getStatisticsCollector();
-
+    private final StatisticsCollector statisticsCollector;
     private final List<Person> people;
     private final int elevatorId;
     private final int liftingCapacity;
 
-    public ElevatorPeopleSystem(int elevatorId, int liftingCapacity) {
+    public ElevatorPeopleSystem(int elevatorId,
+                                int liftingCapacity,
+                                StatisticsCollector statisticsCollector) {
         this.elevatorId = elevatorId;
         this.liftingCapacity = liftingCapacity;
+        this.statisticsCollector = statisticsCollector;
         people = new ArrayList<>();
     }
 
@@ -72,7 +73,7 @@ public class ElevatorPeopleSystem {
         }
         log.info("Elevator: {} ended loading passengers. Number of passengers: {}",
                 elevatorId, people.size());
-        collector.addLoad();
+        statisticsCollector.addLoad();
     }
 
     public void leaveFloor(ElevatorState state,

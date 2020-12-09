@@ -1,7 +1,9 @@
 package by.bychenok.building.elevator;
 
 import by.bychenok.building.floor.Floor;
+import by.bychenok.building.statistics.StatisticsCollector;
 import by.bychenok.person.Person;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -18,7 +20,8 @@ class ElevatorPeopleSystemTest {
     @Test
     void unload_empty_success() {
         //GIVEN
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         system.unload(0);
 
         //EXPECT
@@ -28,9 +31,10 @@ class ElevatorPeopleSystemTest {
     @Test
     void unload_noPeopleToUnload_success() {
         //GIVEN
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), statisticsCollector);
         Set<Integer> stopFloors = new HashSet<>();
         int unloadFloor = 3;
         Person anotherFloorPerson =
@@ -46,10 +50,11 @@ class ElevatorPeopleSystemTest {
     @Test
     void unload_allPeople_success() {
         //GIVEN
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), statisticsCollector);
         int unloadFloor = 5;
         Person person1 =
                 new Person(UUID.randomUUID(), 3, unloadFloor, 10);
@@ -67,10 +72,11 @@ class ElevatorPeopleSystemTest {
     @Test
     void unload_notAllPeople_success() {
         //GIVEN
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), statisticsCollector);
         int unloadFloor = 5;
         Person personRightFloor =
                 new Person(UUID.randomUUID(), 3, unloadFloor, 10);
@@ -88,8 +94,9 @@ class ElevatorPeopleSystemTest {
     @Test
     void load_empty_success() {
         //GIVEN
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), statisticsCollector);
         Set<Integer> stopFloors = new HashSet<>();
         system.load(floor, stopFloors, CARRYING_UP);
 
@@ -100,7 +107,8 @@ class ElevatorPeopleSystemTest {
     @Test
     void load_available_exceptionThrown() {
         //GIVEN
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         Floor floor = mock(Floor.class);
         Set<Integer> stopFloors = new HashSet<>();
 
@@ -112,10 +120,11 @@ class ElevatorPeopleSystemTest {
     @Test
     void load_peopleDifferentQueues_success() {
         //GIVEN
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), statisticsCollector);
         Person person1 =
                 new Person(UUID.randomUUID(), 3, 5, 10);
         Person person2 =
@@ -131,10 +140,11 @@ class ElevatorPeopleSystemTest {
     @Test
     void load_peopleCloseToAndOverWeightLimit_success() {
         //GIVEN
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         Set<Integer> stopFloors = new HashSet<>();
-        Floor floor = new Floor(1, new LinkedBlockingQueue<>());
+        Floor floor = new Floor(1, new LinkedBlockingQueue<>(), statisticsCollector);
         Person person =
                 new Person(UUID.randomUUID(), 3, 5, 50);
         Person personCloseToLimit =
@@ -153,7 +163,8 @@ class ElevatorPeopleSystemTest {
     @Test
     void leaveFloor_down_success() {
         //GIVEN
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         Floor floor = mock(Floor.class);
         system.leaveFloor(CARRYING_DOWN, floor, elevatorsManager);
@@ -165,7 +176,8 @@ class ElevatorPeopleSystemTest {
     @Test
     void leaveFloor_up_success() {
         //GIVEN
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         Floor floor = mock(Floor.class);
         system.leaveFloor(CARRYING_UP, floor, elevatorsManager);
@@ -177,7 +189,8 @@ class ElevatorPeopleSystemTest {
     @Test
     void leaveFloor_available_exceptionThrown() {
         //GIVEN
-        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100);
+        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
+        ElevatorPeopleSystem system = new ElevatorPeopleSystem(1, 100, statisticsCollector);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         Floor floor = mock(Floor.class);
 

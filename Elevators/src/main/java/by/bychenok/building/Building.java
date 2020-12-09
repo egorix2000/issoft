@@ -4,7 +4,7 @@ import by.bychenok.building.configuration.BuildingConfig;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.floor.FloorSystem;
-import by.bychenok.building.statistics.StatisticsCollectorFactory;
+import by.bychenok.building.statistics.StatisticsCollector;
 import by.bychenok.person.Person;
 import by.bychenok.person.PersonGenerator;
 import lombok.SneakyThrows;
@@ -19,16 +19,20 @@ public class Building {
     private final Executor generatePeopleExecutor;
     private final Executor manageElevatorsExecutor;
     private final ElevatorsManager elevatorsManager;
+    private final StatisticsCollector statisticsCollector;
 
     public Building(BuildingConfig config) {
         this.config = config;
-        StatisticsCollectorFactory.initFactory(config);
+        statisticsCollector = new StatisticsCollector(config.getNumberOfFloors());
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-        floorSystem = new FloorSystem(config.getNumberOfFloors(), requests);
+        floorSystem = new FloorSystem(config.getNumberOfFloors(),
+                requests,
+                statisticsCollector);
         elevatorsManager = new ElevatorsManager(requests,
                 config.getNumberOfElevators(),
                 config.getElevatorConfig(),
-                floorSystem);
+                floorSystem,
+                statisticsCollector);
         personGenerator = new PersonGenerator(BuildingConfig.MIN_FLOOR,
                 config.getNumberOfFloors(),
                 config.getMinPersonWeight(),
