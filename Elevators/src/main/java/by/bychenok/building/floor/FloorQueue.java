@@ -4,6 +4,7 @@ import by.bychenok.building.elevator.Direction;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.statistics.StatisticsCollector;
+import by.bychenok.building.statistics.StatisticsCollectorFactory;
 import by.bychenok.person.Person;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -16,7 +17,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 public class FloorQueue {
-    private final StatisticsCollector statisticsCollector;
+    private final StatisticsCollector collector = StatisticsCollectorFactory.getStatisticsCollector();
     @Getter
     private final int floorNumber;
     @Getter
@@ -24,14 +25,10 @@ public class FloorQueue {
     private final Queue<Person> people;
     private final FloorButton button;
 
-    public FloorQueue(int floorNumber,
-                      Direction direction,
-                      BlockingQueue<ElevatorRequest> requests,
-                      StatisticsCollector statisticsCollector) {
+    public FloorQueue(int floorNumber, Direction direction, BlockingQueue<ElevatorRequest> requests) {
         this.floorNumber = floorNumber;
         this.direction = direction;
-        this.statisticsCollector = statisticsCollector;
-        this.button = new FloorButton(floorNumber, direction, requests, statisticsCollector);
+        this.button = new FloorButton(floorNumber, direction, requests);
         people = new LinkedList<>();
     }
 
@@ -48,7 +45,7 @@ public class FloorQueue {
         log.info("Person with uuid: {} was added to {} queue " +
                         "on floor: {}. Queue length: {}",
                 person.getUuid(), direction.name(), floorNumber, people.size());
-        statisticsCollector.updateMaxQueue(floorNumber, people.size(), direction);
+        collector.updateMaxQueue(floorNumber, people.size(), direction);
         button.press(elevatorsManager);
     }
 
@@ -62,7 +59,7 @@ public class FloorQueue {
                     p.get().getUuid(), direction.name(), floorNumber, people.size());
             return p;
         } else {
-            p.ifPresent(person -> statisticsCollector.addOverload());
+            p.ifPresent(person -> collector.addOverload());
             return Optional.empty();
         }
     }

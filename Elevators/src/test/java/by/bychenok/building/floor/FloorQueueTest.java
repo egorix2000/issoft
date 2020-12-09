@@ -2,7 +2,6 @@ package by.bychenok.building.floor;
 
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
-import by.bychenok.building.statistics.StatisticsCollector;
 import by.bychenok.person.Person;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -22,10 +21,9 @@ class FloorQueueTest {
     @Test
     void handleElevatorLeaveEvent_notEmptyQueue_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests, statisticsCollector);
+        FloorQueue people = new FloorQueue(1, UP, requests);
         Person p = new Person(UUID.randomUUID(), 1, 2, 10);
         people.add(p, elevatorsManager);
         requests.take();
@@ -38,10 +36,9 @@ class FloorQueueTest {
     @Test
     void handleElevatorLeaveEvent_emptyQueue_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests, statisticsCollector);
+        FloorQueue people = new FloorQueue(1, UP, requests);
         people.handleElevatorLeaveEvent(elevatorsManager);
 
         //EXPECT
@@ -51,12 +48,11 @@ class FloorQueueTest {
     @Test
     void poll_heavyPerson_returnNull() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         int personWeight = 10;
         int maxWeight = 10;
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests, statisticsCollector);
+        FloorQueue people = new FloorQueue(1, UP, requests);
         Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
         people.add(p, elevatorsManager);
         Optional<Person> polled = people.poll(maxWeight);
@@ -68,9 +64,8 @@ class FloorQueueTest {
     @Test
     void poll_empty_returnNull() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-        FloorQueue people = new FloorQueue(1, UP, requests, statisticsCollector);
+        FloorQueue people = new FloorQueue(1, UP, requests);
         Optional<Person> polled = people.poll(100);
 
         //EXPECT
@@ -80,12 +75,11 @@ class FloorQueueTest {
     @Test
     void poll_closeToHeavyPerson_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         int personWeight = 10;
         int maxWeight = 11;
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
-        FloorQueue people = new FloorQueue(1, UP, requests, statisticsCollector);
+        FloorQueue people = new FloorQueue(1, UP, requests);
         Person p = new Person(UUID.randomUUID(), 1, 2, personWeight);
         people.add(p, elevatorsManager);
         Optional<Person> polled = people.poll(maxWeight);

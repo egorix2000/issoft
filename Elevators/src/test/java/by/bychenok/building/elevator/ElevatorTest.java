@@ -2,7 +2,6 @@ package by.bychenok.building.elevator;
 
 import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
-import by.bychenok.building.statistics.StatisticsCollector;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -16,7 +15,6 @@ class ElevatorTest {
     @Test
     void pickUpPassenger_availableDownRequest_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorConfig config = new ElevatorConfig(
@@ -28,8 +26,7 @@ class ElevatorTest {
         Elevator elevator = new Elevator(1,
                 config,
                 floorSystem,
-                elevatorsManager,
-                statisticsCollector);
+                elevatorsManager);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, DOWN);
         elevator.lock();
             elevator.pickUpPassenger(request);
@@ -42,7 +39,6 @@ class ElevatorTest {
     @Test
     void pickUpPassenger_availableUpRequest_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorConfig config = new ElevatorConfig(
@@ -54,8 +50,7 @@ class ElevatorTest {
         Elevator elevator = new Elevator(1,
                 config,
                 floorSystem,
-                elevatorsManager,
-                statisticsCollector);
+                elevatorsManager);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         elevator.lock();
             elevator.pickUpPassenger(request);
@@ -68,7 +63,6 @@ class ElevatorTest {
     @Test
     void pickUpPassenger_carryingWrongDirection_exceptionThrown() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorConfig config = new ElevatorConfig(
@@ -80,8 +74,7 @@ class ElevatorTest {
         Elevator elevator = new Elevator(1,
                 config,
                 floorSystem,
-                elevatorsManager,
-                statisticsCollector);
+                elevatorsManager);
         ElevatorRequest requestUp = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         ElevatorRequest requestDown = new ElevatorRequest(UUID.randomUUID(), 1, DOWN);
         elevator.lock();
@@ -96,7 +89,6 @@ class ElevatorTest {
     @Test
     void pickUpPassenger_carryingSameDirectionUp_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorConfig config = new ElevatorConfig(
@@ -108,8 +100,7 @@ class ElevatorTest {
         Elevator elevator = new Elevator(1,
                 config,
                 floorSystem,
-                elevatorsManager,
-                statisticsCollector);
+                elevatorsManager);
         ElevatorRequest requestUp = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         ElevatorRequest additionalRequestUp = new ElevatorRequest(UUID.randomUUID(), 2, UP);
         elevator.lock();
@@ -123,7 +114,6 @@ class ElevatorTest {
     @Test
     void pickUpPassenger_carryingSameDirectionDown_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorConfig config = new ElevatorConfig(
@@ -135,8 +125,7 @@ class ElevatorTest {
         Elevator elevator = new Elevator(1,
                 config,
                 floorSystem,
-                elevatorsManager,
-                statisticsCollector);
+                elevatorsManager);
         ElevatorRequest requestDown = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         ElevatorRequest additionalRequestDown = new ElevatorRequest(UUID.randomUUID(), 2, UP);
         elevator.lock();

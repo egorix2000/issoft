@@ -18,9 +18,9 @@ public class StatisticsCollector {
     private int totalLoadCount;
     private int totalOverloadCount;
 
-    public StatisticsCollector(int numberOfFloors) {
+    public StatisticsCollector(BuildingConfig config) {
         List<Integer> initList = IntStream
-                .range(0, numberOfFloors)
+                .range(0, config.getNumberOfFloors())
                 .mapToObj(i -> 0)
                 .collect(Collectors.toList());
         pressUpCountPerFloor = new ArrayList<>(initList);

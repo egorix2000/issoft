@@ -2,7 +2,6 @@ package by.bychenok.building.elevator;
 
 import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
-import by.bychenok.building.statistics.StatisticsCollector;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +37,14 @@ public class Elevator implements Runnable {
     public Elevator(int id,
                     ElevatorConfig elevatorConfig,
                     FloorSystem floorSystem,
-                    ElevatorsManager elevatorsManager,
-                    StatisticsCollector statisticsCollector) {
+                    ElevatorsManager elevatorsManager) {
         this.id = id;
         this.doorOpenCloseTimeSeconds = elevatorConfig.getDoorOpenCloseTimeSeconds();
         this.floorPassTimeSeconds = elevatorConfig.getFloorPassTimeSeconds();
         this.currentFloor = elevatorConfig.getStartElevatorFloor();
         this.floorSystem = floorSystem;
         this.elevatorsManager = elevatorsManager;
-        peopleSystem = new ElevatorPeopleSystem(id, elevatorConfig.getLiftingCapacity(), statisticsCollector);
+        peopleSystem = new ElevatorPeopleSystem(id, elevatorConfig.getLiftingCapacity());
         stopFloors = new HashSet<>();
         elevatorLock = new ReentrantLock();
         state = AVAILABLE;

@@ -2,7 +2,6 @@ package by.bychenok.building.floor;
 
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
-import by.bychenok.building.statistics.StatisticsCollector;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,10 +20,9 @@ class FloorButtonTest {
         @Test
         void press_success() {
             //GIVEN
-            StatisticsCollector statisticsCollector = new StatisticsCollector(20);
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(1, UP, requests, statisticsCollector);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
 
             //EXPECT
@@ -38,10 +36,9 @@ class FloorButtonTest {
         @Test
         void press_doublePress_success() {
             //GIVEN
-            StatisticsCollector statisticsCollector = new StatisticsCollector(20);
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(1, UP, requests, statisticsCollector);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             button.press(elevatorsManager);
 
@@ -57,10 +54,9 @@ class FloorButtonTest {
         @Test
         void press_pressPollRequestPress_success() {
             //GIVEN
-            StatisticsCollector statisticsCollector = new StatisticsCollector(20);
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(1, UP, requests, statisticsCollector);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             requests.take();
             button.press(elevatorsManager);
@@ -75,10 +71,9 @@ class FloorButtonTest {
         @Test
         void press_pressResetPress_success() {
             //GIVEN
-            StatisticsCollector statisticsCollector = new StatisticsCollector(20);
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(1, UP, requests, statisticsCollector);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             button.reset();
             button.press(elevatorsManager);
@@ -94,10 +89,9 @@ class FloorButtonTest {
         @Test
         void press_pressResetPollRequestPress_success() {
             //GIVEN
-            StatisticsCollector statisticsCollector = new StatisticsCollector(20);
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button = new FloorButton(1, UP, requests, statisticsCollector);
+            FloorButton button = new FloorButton(1, UP, requests);
             button.press(elevatorsManager);
             button.reset();
             requests.take();
@@ -117,11 +111,10 @@ class FloorButtonTest {
         @Test
         void press_pressOnDifferentFloors_success() {
             //GIVEN
-            StatisticsCollector statisticsCollector = new StatisticsCollector(20);
             ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
             BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
-            FloorButton button1 = new FloorButton(1, UP, requests, statisticsCollector);
-            FloorButton button2 = new FloorButton(2, UP, requests, statisticsCollector);
+            FloorButton button1 = new FloorButton(1, UP, requests);
+            FloorButton button2 = new FloorButton(2, UP, requests);
             button1.press(elevatorsManager);
             button2.press(elevatorsManager);
 

@@ -2,7 +2,6 @@ package by.bychenok.building.floor;
 
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
-import by.bychenok.building.statistics.StatisticsCollector;
 import by.bychenok.person.Person;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -22,11 +21,9 @@ public class Floor {
     private final FloorQueue peopleUp;
     private final FloorQueue peopleDown;
 
-    public Floor(int number,
-                 BlockingQueue<ElevatorRequest> requests,
-                 StatisticsCollector statisticsCollector) {
-        peopleUp = new FloorQueue(number, UP, requests, statisticsCollector);
-        peopleDown = new FloorQueue(number, DOWN, requests, statisticsCollector);
+    public Floor(int number, BlockingQueue<ElevatorRequest> requests) {
+        peopleUp = new FloorQueue(number, UP, requests);
+        peopleDown = new FloorQueue(number, DOWN, requests);
         this.number = number;
     }
 

@@ -2,7 +2,6 @@ package by.bychenok.building.elevator;
 
 import by.bychenok.building.configuration.ElevatorConfig;
 import by.bychenok.building.floor.FloorSystem;
-import by.bychenok.building.statistics.StatisticsCollector;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,6 @@ class ElevatorSearchEngineTest {
     @Test
     void findElevatorToHandleRequest_available_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorSearchEngine searchEngine = new ElevatorSearchEngine();
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
@@ -44,7 +42,7 @@ class ElevatorSearchEngineTest {
                 0
         );
         Elevator availableElevator = new Elevator(
-                id, config, floorSystem, elevatorsManager, statisticsCollector);
+                id, config, floorSystem, elevatorsManager);
         List<Elevator> elevators = ImmutableList.of(availableElevator);
         ElevatorRequest request = new ElevatorRequest(UUID.randomUUID(), 1, UP);
         Optional<Integer> foundElevatorId =
@@ -60,7 +58,6 @@ class ElevatorSearchEngineTest {
     @Test
     void findElevatorToHandleRequest_carryingUp_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorSearchEngine searchEngine = new ElevatorSearchEngine();
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
@@ -73,7 +70,7 @@ class ElevatorSearchEngineTest {
                 startFloor
         );
         Elevator carryingElevator = new Elevator(
-                id, config, floorSystem, elevatorsManager, statisticsCollector);
+                id, config, floorSystem, elevatorsManager);
         ElevatorRequest elevatorRequest = new ElevatorRequest(UUID.randomUUID(), 1, UP);
 
         carryingElevator.lock();
@@ -95,7 +92,6 @@ class ElevatorSearchEngineTest {
     @Test
     void findElevatorToHandleRequest_carryingDown_success() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorSearchEngine searchEngine = new ElevatorSearchEngine();
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
@@ -108,7 +104,7 @@ class ElevatorSearchEngineTest {
                 startFloor
         );
         Elevator carryingElevator = new Elevator(
-                id, config, floorSystem, elevatorsManager, statisticsCollector);
+                id, config, floorSystem, elevatorsManager);
         ElevatorRequest elevatorRequest = new ElevatorRequest(UUID.randomUUID(), 3, DOWN);
 
         carryingElevator.lock();
@@ -130,7 +126,6 @@ class ElevatorSearchEngineTest {
     @Test
     void findElevatorToHandleRequest_noSuitable_returnEmpty() {
         //GIVEN
-        StatisticsCollector statisticsCollector = new StatisticsCollector(20);
         ElevatorSearchEngine searchEngine = new ElevatorSearchEngine();
         FloorSystem floorSystem = mock(FloorSystem.class);
         ElevatorsManager elevatorsManager = mock(ElevatorsManager.class);
@@ -143,7 +138,7 @@ class ElevatorSearchEngineTest {
                 startUpElevatorFloor
         );
         Elevator carryingElevatorUp = new Elevator(
-                0, configUp, floorSystem, elevatorsManager, statisticsCollector);
+                0, configUp, floorSystem, elevatorsManager);
         ElevatorRequest elevatorUpRequest = new ElevatorRequest(UUID.randomUUID(), 4, UP);
 
         carryingElevatorUp.lock();
@@ -158,7 +153,7 @@ class ElevatorSearchEngineTest {
                 startDownElevatorFloor
         );
         Elevator carryingElevatorDown = new Elevator(
-                0, configDown, floorSystem, elevatorsManager, statisticsCollector);
+                0, configDown, floorSystem, elevatorsManager);
         ElevatorRequest elevatorDownRequest = new ElevatorRequest(UUID.randomUUID(), 3, DOWN);
 
         carryingElevatorDown.lock();
