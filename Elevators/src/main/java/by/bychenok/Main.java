@@ -9,15 +9,15 @@ public class Main {
     public static void main(String[] args) {
         ElevatorConfig elevatorConfig = new ElevatorConfig(
                 150,
-                2,
-                3,
+                1,
+                1,
                 0);
 
         BuildingConfig config = new BuildingConfig(
-                10,
-                4,
-                3,
                 8,
+                4,
+                1,
+                3,
                 30,
                 80,
                 elevatorConfig);

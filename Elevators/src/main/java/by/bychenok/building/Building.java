@@ -4,8 +4,10 @@ import by.bychenok.building.configuration.BuildingConfig;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
 import by.bychenok.building.floor.FloorSystem;
+import by.bychenok.building.statistics.StatisticsCollectorFactory;
 import by.bychenok.person.Person;
 import by.bychenok.person.PersonGenerator;
+import lombok.SneakyThrows;
 
 import java.util.concurrent.*;
 
@@ -20,6 +22,7 @@ public class Building {
 
     public Building(BuildingConfig config) {
         this.config = config;
+        StatisticsCollectorFactory.initFactory(config);
         BlockingQueue<ElevatorRequest> requests = new LinkedBlockingQueue<>();
         floorSystem = new FloorSystem(config.getNumberOfFloors(), requests);
         elevatorsManager = new ElevatorsManager(requests,
@@ -34,6 +37,7 @@ public class Building {
         manageElevatorsExecutor = Executors.newSingleThreadExecutor();
     }
 
+    @SneakyThrows
     public void start() {
         elevatorsManager.startElevators();
         manageElevatorsExecutor.execute(elevatorsManager);

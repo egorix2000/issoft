@@ -3,6 +3,8 @@ package by.bychenok.building.floor;
 import by.bychenok.building.elevator.Direction;
 import by.bychenok.building.elevator.ElevatorRequest;
 import by.bychenok.building.elevator.ElevatorsManager;
+import by.bychenok.building.statistics.StatisticsCollector;
+import by.bychenok.building.statistics.StatisticsCollectorFactory;
 import by.bychenok.person.Person;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -15,6 +17,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 public class FloorQueue {
+    private final StatisticsCollector collector = StatisticsCollectorFactory.getStatisticsCollector();
     @Getter
     private final int floorNumber;
     @Getter
@@ -42,6 +45,7 @@ public class FloorQueue {
         log.info("Person with uuid: {} was added to {} queue " +
                         "on floor: {}. Queue length: {}",
                 person.getUuid(), direction.name(), floorNumber, people.size());
+        collector.updateMaxQueue(floorNumber, people.size(), direction);
         button.press(elevatorsManager);
     }
 
@@ -55,6 +59,7 @@ public class FloorQueue {
                     p.get().getUuid(), direction.name(), floorNumber, people.size());
             return p;
         } else {
+            p.ifPresent(person -> collector.addOverload());
             return Optional.empty();
         }
     }

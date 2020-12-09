@@ -86,5 +86,6 @@ public class ElevatorsManager implements Runnable {
             log.info("No requests to handle. Waiting for new request ...");
             wait();
         }
+        System.out.println("Interrupted");
     }
 }
